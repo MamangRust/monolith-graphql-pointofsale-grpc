@@ -1,0 +1,120 @@
+syntax = "proto3";
+
+package pb.cashier;
+
+option go_package = "github.com/MamangRust/monolith-graphql-pointofsale-pb/cashier";
+
+message FindYearCashier {
+  int32 year = 1;
+}
+
+message FindYearCashierByMerchant {
+  int32 merchant_id = 1;
+  int32 year = 2;
+}
+
+message FindYearCashierById {
+  int32 cashier_id = 1;
+  int32 year = 2;
+}
+
+message FindYearMonthTotalSales {
+  int32 year = 1;
+  int32 month = 2;
+}
+
+message FindYearTotalSales {
+  int32 year = 1;
+}
+
+message FindYearMonthTotalSalesById {
+  int32 year = 1;
+  int32 month = 2;
+  int32 cashier_id = 3;
+}
+
+message FindYearTotalSalesById {
+  int32 year = 1;
+  int32 cashier_id = 2;
+}
+
+message FindYearMonthTotalSalesByMerchant {
+  int32 year = 1;
+  int32 month = 2;
+  int32 merchant_id = 3;
+}
+
+message FindYearTotalSalesByMerchant {
+  int32 year = 1;
+  int32 merchant_id = 2;
+}
+
+message CashierResponseMonthSales {
+  string month = 1;
+  int32 cashier_id = 2;
+  string cashier_name = 3;
+  int32 order_count = 4;
+  int32 total_sales = 5;
+}
+
+message CashierResponseYearSales {
+  string year = 1;
+  int32 cashier_id = 2;
+  string cashier_name = 3;
+  int32 order_count = 4;
+  int32 total_sales = 5;
+}
+
+message CashierResponseMonthTotalSales {
+  string year = 1;
+  string month = 2;
+  int32 total_sales = 6;
+}
+
+message CashierResponseYearTotalSales {
+  string year = 1;
+  int32 total_sales = 2;
+}
+
+message ApiResponseCashierMonthSales {
+  string status = 1;
+  string message = 2;
+  repeated CashierResponseMonthSales data = 3;
+}
+
+message ApiResponseCashierYearSales {
+  string status = 1;
+  string message = 2;
+  repeated CashierResponseYearSales data = 3;
+}
+
+message ApiResponseCashierMonthlyTotalSales {
+  string status = 1;
+  string message = 2;
+  repeated CashierResponseMonthTotalSales data = 3;
+}
+
+message ApiResponseCashierYearlyTotalSales {
+  string status = 1;
+  string message = 2;
+  repeated CashierResponseYearTotalSales data = 3;
+}
+
+service CashierStatsService {
+  rpc FindMonthlyTotalSales(FindYearMonthTotalSales) returns (ApiResponseCashierMonthlyTotalSales);
+  rpc FindYearlyTotalSales(FindYearTotalSales) returns (ApiResponseCashierYearlyTotalSales);
+
+  rpc FindMonthlyTotalSalesById(FindYearMonthTotalSalesById) returns (ApiResponseCashierMonthlyTotalSales);
+  rpc FindYearlyTotalSalesById(FindYearTotalSalesById) returns (ApiResponseCashierYearlyTotalSales);
+
+  rpc FindMonthlyTotalSalesByMerchant(FindYearMonthTotalSalesByMerchant) returns (ApiResponseCashierMonthlyTotalSales);
+  rpc FindYearlyTotalSalesByMerchant(FindYearTotalSalesByMerchant) returns (ApiResponseCashierYearlyTotalSales);
+
+  rpc FindMonthSales(FindYearCashier) returns (ApiResponseCashierMonthSales);
+  rpc FindYearSales(FindYearCashier) returns (ApiResponseCashierYearSales);
+  rpc FindMonthSalesByMerchant(FindYearCashierByMerchant) returns (ApiResponseCashierMonthSales);
+  rpc FindYearSalesByMerchant(FindYearCashierByMerchant) returns (ApiResponseCashierYearSales);
+
+  rpc FindMonthSalesById(FindYearCashierById) returns (ApiResponseCashierMonthSales);
+  rpc FindYearSalesById(FindYearCashierById) returns (ApiResponseCashierYearSales);
+}
