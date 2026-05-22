@@ -111,9 +111,6 @@ Use the provided `justfile` or `Makefile` shortcuts to pull, build, and orchestr
 ```bash
 # Using Just
 just up
-
-# Or using Make
-make build-up
 ```
 This starts the backend databases (Postgres, Redis), Kafka, the GraphQL API Gateway, downstream gRPC services, and NGINX on port `80`.
 
