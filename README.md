@@ -1,343 +1,601 @@
-# Distributed Modular Monolith Point-of-Sale (POS) System
+# Distributed Modular Monolith — Point of Sale (POS) Platform
 
-This repository hosts a state-of-the-art **Distributed Modular Monolith** implementation of a high-performance **Point-of-Sale (POS)** platform. The system is designed around **strict modular boundary separation** across business domains (Authentication, User, Merchant, Product, Cashier, Category, Transaction, Order, etc.) while maintaining the simplicity of running and deploying as a single unified service.
+A production-grade, **modular-monolith Point of Sale (POS) backend** built with **Go (Golang)**, designed around domain-driven service boundaries while retaining the operational simplicity of a single deployment unit. Each business domain — Users, Roles, Merchants, Cashiers, Products, Categories, Orders, Transactions — lives in its own self-contained module with a clean internal architecture. All modules ship as independently deployable containers that communicate via **gRPC** and asynchronous **Kafka** events.
 
-Unlike traditional monoliths, this architecture exposes a **unified GraphQL API Gateway** to external clients and leverages high-performance, strongly-typed **gRPC** for low-latency internal communication between modules. This allows the codebase to scale seamlessly and enables any individual module to be extracted into its own independent microservice if required by business growth.
+The platform ships with a **full observability stack** (Prometheus, Grafana, Loki, Pyroscope, Jaeger, OpenTelemetry), **Redis caching** with instrumented metrics, **circuit-breaker & rate-limiting** resilience patterns, and first-class **Docker Compose** orchestrations.
 
 ---
 
 ## Key Features
 
-*   **Authentication & Granular Access Control**
-    *   JWT-based session authentication with secure token management.
-    *   Role-Based Access Control (RBAC) supporting **Admin**, **Merchant**, and **Cashier** roles.
-    *   Fine-grained permissions evaluated dynamically at the GraphQL Gateway and gRPC handler levels.
-
-*   **Merchant & Cashier Operations**
-    *   Merchant onboarding, registration workflows, and branch configuration.
-    *   Multi-cashier sub-account management nested under specific merchant stores.
-    *   Event-driven merchant ledger reconciliation integrated with the Transaction Service.
-
-*   **Inventory & Catalog Management**
-    *   Fully-featured CRUD operations for products and dynamic categories.
-    *   Real-time stock tracking, inventory alerts, and historical pricing updates.
-    *   Role-based read/write access constraints ensuring store catalogs remain tamper-proof.
-
-*   **High-Frequency POS Transactions**
-    *   Rapid basket creation, real-time checkout flows, and instant inventory deductions.
-    *   Atomic status updates (Pending, Paid, Refunded, Canceled).
-    *   Low-latency caching with Redis to accelerate checkout validation and basket lookups.
-
-*   **Event-Driven Asynchronous Pipelines**
-    *   High-throughput Apache Kafka event streaming to decoupled downstream tasks.
-    *   Automatic processing of out-of-band events (e.g., wallet updates, ledger settlements, email notifications).
-
-*   **Enterprise Observability & Telemetry**
-    *   Structured, contextual logging (Promtail → Loki).
-    *   Comprehensive performance metrics exposed via `/metrics` (Prometheus).
-    *   End-to-end distributed tracing across all HTTP/GraphQL and gRPC borders (OpenTelemetry → Jaeger).
-    *   Stunning, pre-configured Grafana dashboards for real-time visualization of system health.
+| Domain | Capabilities |
+|--------|-------------|
+| **Auth & Users** | Registration, login, JWT access/refresh tokens, role-based authorization (RBAC), password reset flows |
+| **Roles** | RBAC role creation, permission mappings, role-based authorization guards |
+| **Merchants** | Merchant onboarding, store profile, and verification documents handling |
+| **Cashiers** | Cashier registration, shift logging, store assignment, and performance tracking |
+| **Categories** | Product taxonomy, CRUD operations, hierarchy management |
+| **Products & Inventory** | Product listings, CRUD, stock monitoring, pricing, categorization, SKU/barcodes |
+| **Orders & Checkout** | Cart checkout, sales transaction generation, order lifecycle, order-item decomposition |
+| **Transactions** | Payment processing, transaction statuses, payment history, billing integration |
+| **Notifications** | Kafka-driven email notification consumers for checkout receipts, account creation, password resets |
+| **Observability** | Metrics (Prometheus + Grafana), Logging (Loki), Continuous Profiling (Pyroscope), Tracing (Jaeger + OpenTelemetry), System metrics (Node Exporter), Kafka metrics (Kafka Exporter) |
+| **Deployment** | Multi-container Docker Compose for local development |
 
 ---
 
-## Architecture & Deployment Model
+## Architecture Overview
 
-### **1. Docker Compose (Local Development)**
-*   Orchestrates the entire stack locally: **API Gateway, Downstream Services, PostgreSQL, Redis, Apache Kafka, Zookeeper, and the Observability Pipeline**.
-    *   Ensures engineers can spin up a fully isolated, production-like replica of the architecture with a single command.
-    *   Leverages Docker networks to secure internal gRPC traffic while only exposing NGINX (port `80`) and the GraphQL Playground to the host.
+The platform follows a **Distributed Modular Monolith** architecture — each module is a self-contained Go binary with its own clean-architecture internals, deployed as an independent container. An **API Gateway** (NGINX + gqlgen) provides a unified **GraphQL** entry point, translating GraphQL queries and mutations into gRPC calls to downstream services.
 
-### **2. Kubernetes (Production Scale)**
-*   Deploys each domain service into its own dedicated set of **Pods** to maintain hard resource boundaries.
-*   Configures **Horizontal Pod Autoscalers (HPA)** to dynamically scale high-load services (e.g., *Order*, *Transaction*, or *Product*) in response to traffic spikes.
-*   Separates stateful data layers (PostgreSQL, Redis, Kafka) using Kubernetes Persistent Volumes (PV/PVC) and StatefulSets.
-*   Integrates Prometheus Operators and Promtail DaemonSets to harvest node-level metrics and container logs transparently.
+### Core Architecture Principles
+
+- **Single Responsibility**: Each service owns its domain logic, data access, and caching layer.
+- **Clean Architecture**: Every service follows `handler → service → repository` with clear dependency injection.
+- **Event-Driven Decoupling**: Kafka enables asynchronous communication (e.g. sending receipt emails after transaction completion) without direct service dependencies.
+- **Observability-First**: Every service is instrumented with OpenTelemetry traces, Prometheus metrics, Pyroscope profiling, and structured logging.
+- **Resilience Patterns**: Built-in circuit breakers, request rate limiters, and load monitors in the shared `pkg/resilience` package.
+
+```mermaid
+graph TB
+    classDef client fill:#0f172a,stroke:#38bdf8,color:#e0f2fe,stroke-width:2px,font-weight:bold
+    classDef gateway fill:#1e293b,stroke:#22d3ee,color:#cffafe,stroke-width:2px,font-weight:bold
+    classDef domain fill:#1e1b4b,stroke:#818cf8,color:#e0e7ff,stroke-width:1.5px
+    classDef infra fill:#172554,stroke:#60a5fa,color:#dbeafe,stroke-width:1.5px
+    classDef obs fill:#052e16,stroke:#4ade80,color:#dcfce7,stroke-width:1.5px
+    classDef event fill:#431407,stroke:#fb923c,color:#fed7aa,stroke-width:1.5px
+
+    Client["Client Applications<br/>(POS Web Terminal / Mobile App)"]:::client
+
+    subgraph APIGateway["API Gateway — NGINX + gqlgen"]
+        direction LR
+        GraphQL["GraphQL Endpoint<br/>/query"]
+        Playground["GraphQL Playground<br/>/"]
+        AuthMW["JWT Auth<br/>Middleware"]
+    end
+    class APIGateway gateway
+
+    Client --> APIGateway
+
+    subgraph BusinessServices["Business Domain Services"]
+        direction TB
+
+        subgraph IdentityDomain["Identity & Access"]
+            AUTH["Auth Service<br/>JWT Tokens"]
+            USER["User Service<br/>Profile Management"]
+            ROLE["Role Service<br/>RBAC Permissions"]
+        end
+
+        subgraph MerchantDomain["Merchant & Cashier"]
+            MERCH["Merchant Service<br/>Store Profiles & Docs"]
+            CASHIER["Cashier Service<br/>Assignments & Shifts"]
+        end
+
+        subgraph CatalogDomain["Catalog & Inventory"]
+            PROD["Product Service"]
+            CAT["Category Service"]
+        end
+
+        subgraph CommerceDomain["Commerce & Payments"]
+            ORDER["Order Service"]
+            OITEM["Order Item Service"]
+            TXN["Transaction Service"]
+        end
+    end
+    class BusinessServices domain
+
+    APIGateway -->|"gRPC"| BusinessServices
+
+    subgraph Infrastructure["Infrastructure Layer"]
+        direction LR
+        PG[("PostgreSQL<br/>Primary Store")]
+        PGBOUNCE["PgBouncer<br/>Connection Pooler"]
+        REDIS[("Redis Clusters<br/>Cache (Multi-Instance)")]
+        KAFKA[("Kafka<br/>Event Bus")]
+    end
+    class Infrastructure infra
+
+    BusinessServices -->|"Read / Write"| PGBOUNCE
+    PGBOUNCE --> PG
+    BusinessServices -->|"Cache / Invalidate"| REDIS
+    BusinessServices -->|"Publish Events"| KAFKA
+
+    subgraph EventConsumers["Event-Driven Consumers"]
+        EMAIL["Email Service<br/>Receipts & Notifications"]
+    end
+    class EventConsumers event
+
+    KAFKA -->|"Consume Events"| EMAIL
+
+    subgraph Observability["Observability Stack"]
+        direction LR
+        PROM["Prometheus<br/>Metrics"]
+        LOKI["Loki<br/>Log Aggregation"]
+        PYRO["Pyroscope<br/>Continuous Profiling"]
+        JAEGER["Jaeger<br/>Distributed Traces"]
+        GRAFANA["Grafana<br/>Dashboards"]
+        OTEL["OTel Collector<br/>Telemetry Pipeline"]
+        NODEX["Node Exporter<br/>System Metrics"]
+        KAFKAX["Kafka Exporter<br/>Broker Metrics"]
+    end
+    class Observability obs
+
+    BusinessServices -.->|"/metrics"| PROM
+    BusinessServices -.->|"Traces"| OTEL
+    OTEL -.-> JAEGER
+    PROM -.-> GRAFANA
+    LOKI -.-> GRAFANA
+    PYRO -.-> GRAFANA
+    NODEX -.-> PROM
+    KAFKAX -.-> PROM
+```
+
+---
+
+## Service Catalog
+
+The platform is composed of **13 modular services** working in synergy with the supporting infrastructure:
+
+```mermaid
+graph LR
+    classDef svc fill:#1e1b4b,stroke:#a78bfa,color:#ede9fe,stroke-width:1px,rx:8
+    classDef gw fill:#1e293b,stroke:#22d3ee,color:#cffafe,stroke-width:2px,rx:8,font-weight:bold
+    classDef support fill:#172554,stroke:#60a5fa,color:#dbeafe,stroke-width:1px,rx:8
+
+    subgraph Gateway
+        API["API Gateway<br/>gqlgen + GraphQL"]:::gw
+    end
+
+    subgraph Identity["Identity & Access (3)"]
+        A1["auth"]:::svc
+        A2["user"]:::svc
+        A3["role"]:::svc
+    end
+
+    subgraph Operations["Operations (2)"]
+        O1["merchant"]:::svc
+        O2["cashier"]:::svc
+    end
+
+    subgraph Catalog["Catalog (2)"]
+        C1["product"]:::svc
+        C2["category"]:::svc
+    end
+
+    subgraph Sales["Sales & Payments (3)"]
+        S1["order"]:::svc
+        S2["order_item"]:::svc
+        S3["transaction"]:::svc
+    end
+
+    subgraph Support["Support Services (2)"]
+        SU1["email"]:::support
+        SU2["migrate"]:::support
+    end
+
+    API --> Identity
+    API --> Operations
+    API --> Catalog
+    API --> Sales
+```
+
+---
+
+## Internal Service Architecture
+
+Every business service follows a strict **Clean Architecture** pattern. Dependencies flow inward, keeping the core business logic free from infrastructure concerns.
+
+```mermaid
+graph TB
+    classDef handler fill:#1e3a5f,stroke:#7dd3fc,color:#e0f2fe,stroke-width:1.5px
+    classDef service fill:#1e1b4b,stroke:#a78bfa,color:#ede9fe,stroke-width:1.5px
+    classDef repo fill:#172554,stroke:#60a5fa,color:#dbeafe,stroke-width:1.5px
+    classDef infra fill:#052e16,stroke:#4ade80,color:#dcfce7,stroke-width:1.5px
+    classDef shared fill:#431407,stroke:#fb923c,color:#fed7aa,stroke-width:1.5px
+
+    subgraph Service["service/<name>/"]
+        direction TB
+
+        CMD["cmd/main.go<br/>Entry Point"]
+
+        subgraph Internal["internal/"]
+            direction TB
+            APPS["apps/server.go<br/>Dependency Wiring"]:::handler
+            HANDLER["handler/<br/>gRPC Handlers"]:::handler
+            MW["middleware/<br/>Interceptors"]:::handler
+            SVC["service/<br/>Business Logic"]:::service
+            CACHE["cache/<br/>Redis Cache Layer"]:::service
+            REPO["repository/<br/>Data Access (sqlc)"]:::repo
+        end
+
+        CMD --> APPS
+        APPS --> HANDLER
+        APPS --> SVC
+        APPS --> CACHE
+        APPS --> REPO
+        HANDLER --> SVC
+        SVC --> REPO
+        SVC --> CACHE
+    end
+
+    subgraph SharedLibs["shared/ — Shared Libraries"]
+        direction LR
+        DOMAIN["domain/<br/>record / requests / response"]:::shared
+        OBS["observability/<br/>cache_metrics / tracing_metrics"]:::shared
+        CACHESHARED["cache/<br/>redis_cache.go"]:::shared
+        PB["pb/<br/>Protobuf Generated Code"]:::shared
+        MAPPER["mapper/<br/>Domain ↔ Proto"]:::shared
+        ERRORS["errors/ + errorhandler/"]:::shared
+    end
+
+    subgraph PkgLibs["pkg/ — Platform Libraries"]
+        direction LR
+        PKGAUTH["auth/<br/>JWT Manager"]:::infra
+        PKGKAFKA["kafka/<br/>Producer / Consumer"]:::infra
+        PKGOTEL["otel/<br/>Tracing + Metrics Init"]:::infra
+        PKGRES["resilience/<br/>Circuit Breaker<br/>Rate Limiter<br/>Load Monitor"]:::infra
+        PKGLOG["logger/<br/>Zap Structured Logging"]:::infra
+        PKGSRV["server/<br/>gRPC Server Bootstrap"]:::infra
+        PKGDB["database/<br/>PostgreSQL + Migrations<br/>+ Seeders"]:::infra
+    end
+
+    REPO --> DOMAIN
+    REPO --> PB
+    SVC --> DOMAIN
+    SVC --> OBS
+    HANDLER --> PB
+    HANDLER --> MAPPER
+    APPS --> PKGSRV
+    APPS --> PKGOTEL
+    APPS --> CACHESHARED
+    APPS --> OBS
+```
+
+---
+
+## Data & Event Flow
+
+### Synchronous Flow (gRPC)
+
+All client-facing requests flow through the NGINX Gateway to the API Gateway, which forwards them over gRPC to the appropriate domain service.
+
+```mermaid
+sequenceDiagram
+    autonumber
+    participant C as Client
+    participant GW as API Gateway<br/>(gqlgen + GraphQL)
+    participant SVC as Domain Service<br/>(gRPC Server)
+    participant DB as PostgreSQL (via PgBouncer)
+    participant CACHE as Redis
+
+    C->>GW: GraphQL Request (Query/Mutation)
+    GW->>GW: JWT Authentication
+    GW->>SVC: gRPC Call (Protobuf)
+    SVC->>CACHE: Check Cache
+    alt Cache Hit
+        CACHE-->>SVC: Cached Response
+    else Cache Miss
+        SVC->>DB: SQL Query (sqlc)
+        DB-->>SVC: Result Set
+        SVC->>CACHE: Populate Cache
+    end
+    SVC-->>GW: gRPC Response
+    GW-->>C: GraphQL Response (JSON)
+```
+
+### Asynchronous Flow (Kafka Events)
+
+Services publish domain events to Kafka topics. Downstream consumers (e.g. Email Service) react to these events asynchronously without coupling to the producer.
+
+```mermaid
+sequenceDiagram
+    autonumber
+    participant SVC as Producer Service
+    participant K as Kafka Broker
+    participant EMAIL as Email Service
+    participant SMTP as SMTP Server
+
+    SVC->>K: Publish Event<br/>(e.g., transaction.completed)
+    K-->>EMAIL: Deliver Event
+    EMAIL->>EMAIL: Deserialize & Process
+    EMAIL->>SMTP: Send Notification Receipt
+    SMTP-->>EMAIL: Delivery Confirmation
+```
+
+---
+
+## Observability Architecture
+
+The platform implements all **Three Pillars of Observability** (Metrics, Logs, and Traces) along with **Continuous Profiling** for maximum stability.
+
+```mermaid
+graph TB
+    classDef service fill:#1e1b4b,stroke:#818cf8,color:#e0e7ff,stroke-width:1.5px
+    classDef collector fill:#172554,stroke:#60a5fa,color:#dbeafe,stroke-width:1.5px
+    classDef storage fill:#052e16,stroke:#4ade80,color:#dcfce7,stroke-width:1.5px
+    classDef viz fill:#431407,stroke:#fb923c,color:#fed7aa,stroke-width:2px,font-weight:bold
+
+    subgraph Sources["Telemetry Sources"]
+        direction TB
+        SVCS["All POS Services<br/>(13 services)"]:::service
+        KAFKA_SRC["Kafka Broker"]:::service
+        NODES["Host / Node"]:::service
+    end
+
+    subgraph Collectors["Collection Layer"]
+        direction TB
+        PROM["Prometheus<br/>Scrapes /metrics"]:::collector
+        OTEL["OTel Collector<br/>Receives OTLP spans"]:::collector
+        NODEX["Node Exporter<br/>CPU / Memory / Disk / Net"]:::collector
+        KAFKAX["Kafka Exporter<br/>Topic lag / Broker health"]:::collector
+    end
+
+    subgraph Storage["Storage Layer"]
+        direction TB
+        PROM_TSDB["Prometheus TSDB<br/>(Metrics)"]:::storage
+        LOKI_STORE["Loki<br/>(Log Index + Chunks)"]:::storage
+        PYRO_STORE["Pyroscope<br/>(Profiles)"]:::storage
+        JAEGER_STORE["Jaeger<br/>(Trace Storage)"]:::storage
+    end
+
+    subgraph Visualization["Visualization & Alerting"]
+        GRAFANA["Grafana<br/>Unified Dashboards"]:::viz
+        ALERTMGR["Alertmanager<br/>Alert Routing"]:::viz
+    end
+
+    SVCS -->|"/metrics"| PROM
+    SVCS -->|"OTLP gRPC (traces/logs)"| OTEL
+    SVCS -->|"Pyroscope agent"| PYRO_STORE
+    NODES --> NODEX
+    KAFKA_SRC --> KAFKAX
+
+    NODEX --> PROM
+    KAFKAX --> PROM
+    PROM --> PROM_TSDB
+    OTEL --> JAEGER_STORE
+    OTEL --> LOKI_STORE
+
+    PROM_TSDB --> GRAFANA
+    LOKI_STORE --> GRAFANA
+    PYRO_STORE --> GRAFANA
+    JAEGER_STORE --> GRAFANA
+    PROM_TSDB --> ALERTMGR
+```
+
+| Pillar | Tool | Purpose |
+|--------|------|---------|
+| **Metrics** | Prometheus + Grafana | Request rates, error rates, latency percentiles, cache hit ratios, system resource utilization |
+| **Logging** | Loki + OpenTelemetry | Structured logs from all services, queryable inside Grafana |
+| **Tracing** | Jaeger + OpenTelemetry | End-to-end distributed trace visualization, latency breakdown per service hop |
+| **Continuous Profiling** | Pyroscope | Analysis of CPU, memory allocation, and concurrency performance over time |
+| **Alerting** | Alertmanager | Alert routing and notification for metric threshold breaches |
+
+---
+
+## Deployment Architectures
+
+### Docker Compose (Local Development)
+
+The Docker Compose configuration provides a highly optimized local development environment where each modular service runs alongside its dedicated Redis cache, PostgreSQL, Kafka, and the observability stack.
+
+<p align="center">
+  <img src="./images/archictecture_docker_pointofsale.png" alt="Docker Compose POS Architecture" width="90%" />
+</p>
+
+### Ports Mapping reference
+
+| Service | gRPC Port | HTTP Port |
+|---------|-----------|-----------|
+| **apigateway** | — | `5000` |
+| **auth** | `50051` | `8081` |
+| **role** | `50052` | `8082` |
+| **user** | `50053` | `8083` |
+| **category** | `50054` | `8084` |
+| **cashier** | `50055` | `8085` |
+| **merchant** | `50056` | `8086` |
+| **orderitem** | `50057` | `8087` |
+| **order** | `50058` | `8088` |
+| **product** | `50059` | `8089` |
+| **transaction** | `50060` | `8090` |
+
+### Infrastructure & Telemetry Ports
+
+| Infrastructure / Telemetry | Port |
+|----------------------------|------|
+| **NGINX Reverse Proxy** | `80` |
+| **PostgreSQL** | `5432` |
+| **PgBouncer** | `6432` |
+| **Redis (apigateway)** | `6379` |
+| **Redis (auth)** | `6380` |
+| **Redis (role)** | `6381` |
+| **Redis (user)** | `6382` |
+| **Redis (category)** | `6383` |
+| **Redis (cashier)** | `6384` |
+| **Redis (merchant)** | `6385` |
+| **Redis (orderitem)** | `6386` |
+| **Redis (order)** | `6387` |
+| **Redis (product)** | `6388` |
+| **Redis (transaction)** | `6389` |
+| **Kafka Broker** | `9092` |
+| **Grafana** | `3000` |
+| **Prometheus** | `9090` |
+| **Pyroscope** | `4040` |
+| **Jaeger UI** | `16686` |
+| **Loki** | `3100` |
+| **Alertmanager** | `9093` |
+| **Kafka Exporter** | `9308` |
+| **Postgres Exporter** | `9187` |
 
 ---
 
 ## Technology Stack
 
-| Technology | Role | Details |
-| :--- | :--- | :--- |
-| **Go (Golang)** | Core Language | Built using a multi-module Go workspace (Go 1.25+) |
-| **GraphQL** | Presentation Layer | Unified entry point powered by **99designs/gqlgen** |
-| **gRPC & Protobuf** | Internal Transport | High-performance, strongly-typed internal RPC contract |
-| **Apache Kafka** | Asynchronous Event Bus | Event streaming for settlement, notifications, and telemetry |
-| **PostgreSQL** | Relational Database | Domain-isolated data schemas with persistent storage |
-| **Redis** | In-Memory Cache | Fast session, token verification, and API Gateway caching |
-| **SQLC** | Code Generation | Compile-time safe SQL query generator for Go |
-| **Goose** | Migrations | Version-controlled DB schema migration engine |
-| **OpenTelemetry (OTel)** | Distributed Tracing | Context propagation across GraphQL API & gRPC services |
-| **Jaeger** | Trace Visualizer | Visualizes span timelines and dependency bottlenecks |
-| **Prometheus** | Metric Aggregator | Pulls execution statistics, error rates, and Latency histograms |
-| **Loki & Promtail** | Centralized Logging | High-performance log aggregation and search engine |
-| **Grafana** | Visualization | Unified operational dashboard for metrics, traces, and logs |
-| **NGINX** | Edge Proxy | Reverse proxy routing client requests to the GraphQL API Gateway |
+| Category | Technology | Purpose |
+|----------|-----------|---------|
+| **Language** | Go (Golang) | High-performance, statically typed backend |
+| **API Framework** | gqlgen | GraphQL API Gateway framework |
+| **RPC** | gRPC + Protobuf | High-performance inter-service communication |
+| **Database** | PostgreSQL | Primary relational data store |
+| **Connection Pooling** | PgBouncer | Lightweight connection pooler for PostgreSQL |
+| **SQL Codegen** | sqlc | Type-safe SQL → Go code generation |
+| **Migrations** | Goose | Database schema migration management |
+| **Caching** | Redis | Multi-instance in-memory cache with instrumented metrics |
+| **Messaging** | Apache Kafka | Asynchronous event-driven communication |
+| **Auth** | JWT | Stateless authentication & authorization |
+| **Logging** | Zap | High-performance structured logging |
+| **Metrics** | Prometheus | Metric collection & alerting rules |
+| **Tracing** | Jaeger + OpenTelemetry | Distributed trace collection & visualization |
+| **Continuous Profiling** | Pyroscope | Continuous CPU & memory allocation profiling |
+| **Log Aggregation** | Loki | Centralized log storage & shipping |
+| **Dashboards** | Grafana | Unified metrics, logs, profiling, and trace dashboards |
+| **Alerting** | Alertmanager | Alert routing & notification dispatch |
+| **Telemetry Pipeline** | OTel Collector | Telemetry receive, process, and export |
+| **Reverse Proxy** | NGINX | API routing, load balancing, TLS termination |
+| **Task Runner** | Just | Command automation, compilation, and orchestration |
+| **Resilience** | Circuit Breaker, Rate Limiter, Load Monitor | Fault tolerance patterns (`pkg/resilience`) |
 
 ---
 
 ## Getting Started
 
-Follow these instructions to run and test the complete ecosystem on your local machine.
-
 ### Prerequisites
 
-Ensure you have the following installed on your machine:
-*   [Git](https://git-scm.com/)
-*   [Go](https://go.dev/) (Version 1.25+)
-*   [Docker](https://www.docker.com/) & [Docker Compose](https://docs.docker.com/compose/)
-*   [Make](https://www.gnu.org/software/make/) or [Just](https://github.com/casey/just) (Recommended)
-*   [protoc](https://protobuf.dev/) (If regenerating Protobuf files)
+Ensure the following tools are installed on your system:
 
----
+- [Git](https://git-scm.com/)
+- [Go](https://go.dev/) (v1.20+)
+- [Docker](https://www.docker.com/) & [Docker Compose](https://docs.docker.com/compose/)
+- [Just](https://github.com/casey/just) (task runner)
+- [Protobuf Compiler](https://grpc.io/docs/protoc-installation/) (for proto generation)
 
-### Step-by-Step Installation
+### 1. Clone the Repository
 
-#### 1. Clone the Repository
-```bash
+```sh
 git clone https://github.com/MamangRust/monolith-graphql-pointofsale-grpc.git
 cd monolith-graphql-pointofsale-grpc
 ```
 
-#### 2. Environment Configuration
-Create the required environment files to configure domain ports, database secrets, Kafka brokers, and tracing endpoints:
-*   Create a `.env` file in the root directory for general application configuration.
-*   Create a `docker.env` file in `deployments/local/` for containerized environments.
+### 2. Configure Environment
 
-#### 3. Build & Launch Infrastructure
-Use the provided `justfile` or `Makefile` shortcuts to pull, build, and orchestrate all systems:
+Create the required environment files:
 
-**A. Build images and start all container services:**
-```bash
-# Using Just
-just up
+```sh
+# Root-level configuration
+cp .env.example .env
+
+# Docker-specific overrides
+cp deployments/local/docker.env.example deployments/local/docker.env
 ```
-This starts the backend databases (Postgres, Redis), Kafka, the GraphQL API Gateway, downstream gRPC services, and NGINX on port `80`.
 
-**B. Run Database Migrations:**
-Apply domain-specific DB tables using the migration utility:
-```bash
+Edit the `.env` and `docker.env` files to match your local setup.
+
+### 3. Build & Launch (Docker Compose)
+
+```sh
+# Build all service images and start the full stack
+just build-up
+
+# Run database migrations
 just migrate
-```
 
-**C. Seed Database (Optional):**
-Hydrate the database with mock records (administrators, merchant profiles, cashiers, and inventory items) for rapid evaluation:
-```bash
+# Seed the database with sample data
 just seeder
 ```
 
-Verify that all services are operational by running:
-```bash
-just ps
-```
+### 4. Access Services
 
-#### 4. Stopping the Application
-To tear down the containers and free local resources:
-```bash
-just down
-```
-
----
-
-## Architectural Deep Dive
-
-This platform implements a **Distributed Modular Monolith**. While all domain packages are kept clean, strongly decoupled, and self-contained, they are packaged into a single codebase. At runtime, multiple instances of the Go binary are deployed, with each instance optionally isolated to run only its specific domain service (e.g., `auth`, `product`, `order`), acting exactly like microservices.
-
-### Data Flow & Communication Patterns
-*   **Synchronous Path (GraphQL ➔ gRPC):** External clients hit NGINX (Port `80`), which forwards the request to the **GraphQL API Gateway** (Port `5000`). The Gateway parses and validates the schema using **99designs/gqlgen**, performs token validation via the Redis session cache, and maps the GraphQL request into parallel downstream **gRPC** calls to the microservices.
-*   **Asynchronous Path (Kafka Events):** When complex workflows complete (e.g., checkout success), the `Order Service` publishes an `order_paid` event to a designated Kafka topic. Decoupled listeners (such as the `Transaction Service` and `User Service`) consume the event asynchronously to reconcile balances and update operational metrics.
+| Service | URL |
+|---------|-----|
+| **GraphQL Playground (via Nginx)** | `http://localhost:80` |
+| **GraphQL Endpoint (via Nginx)** | `http://localhost:80/query` |
+| **GraphQL Playground (Direct)** | `http://localhost:5000` |
+| **GraphQL Endpoint (Direct)** | `http://localhost:5000/query` |
+| **Grafana Dashboards** | `http://localhost:3000` (admin/admin) |
+| **Pyroscope UI** | `http://localhost:4040` |
+| **Prometheus UI** | `http://localhost:9090` |
+| **Jaeger UI** | `http://localhost:16686` |
+| **Loki (via Grafana)** | `http://localhost:3000` → Explore → Loki |
 
 ---
 
-### **Local Deployment Architecture**
+## Justfile Tasks
 
-The following diagram illustrates how clients interact with our API Gateway, and how requests flow internally via gRPC, Redis, PostgreSQL, Kafka, and the observability stack in a local Docker Compose setup:
+The project uses `just` as its task automation tool:
 
-```mermaid
-flowchart TD
-    Client["Client (GraphQL / Playground)"] -->|HTTP / :80| NGINX["NGINX (Reverse Proxy)"]
-    NGINX -->|HTTP / :5000| APIGateway["API Gateway (99designs/gqlgen)"]
+| Command | Description |
+|---------|-------------|
+| `just migrate` | Run database schema migrations (up) |
+| `just migrate-down` | Rollback database migrations |
+| `just seeder` | Seed database with mock POS data |
+| `just generate-proto` | Regenerate Go code from `.proto` definitions |
+| `just generate-sql` | Regenerate Go code from SQL queries (sqlc) |
+| `just generate-swagger` | Regenerate Swagger API docs for the Gateway |
+| `just build` | Compile all Go services into `bin/` |
+| `just build-image` | Build Docker images for all services |
+| `just up` | Start all docker compose containers |
+| `just down` | Stop and tear down docker compose containers |
+| `just build-up` | Rebuild images and start the stack |
+| `just tidy-all` | Run `go mod tidy` in all Go service modules |
 
-    subgraph Downstream_gRPC_Services["Downstream gRPC Services (Internal)"]
-        AuthService["Auth Service (gRPC:50051)"]
-        RoleService["Role Service (gRPC:50052)"]
-        UserService["User Service (gRPC:50053)"]
-        CategoryService["Category Service (gRPC:50054)"]
-        CashierService["Cashier Service (gRPC:50055)"]
-        MerchantService["Merchant Service (gRPC:50056)"]
-        OrderItemService["Order Item Service (gRPC:50057)"]
-        OrderService["Order Service (gRPC:50058)"]
-        ProductService["Product Service (gRPC:50059)"]
-        TransactionService["Transaction Service (gRPC:50060)"]
-    end
+---
 
-    %% Gateway to Downstream
-    APIGateway -->|gRPC| AuthService
-    APIGateway -->|gRPC| RoleService
-    APIGateway -->|gRPC| UserService
-    APIGateway -->|gRPC| CategoryService
-    APIGateway -->|gRPC| CashierService
-    APIGateway -->|gRPC| MerchantService
-    APIGateway -->|gRPC| OrderItemService
-    APIGateway -->|gRPC| OrderService
-    APIGateway -->|gRPC| ProductService
-    APIGateway -->|gRPC| TransactionService
+## Project Structure
 
-    %% Database & Cache
-    subgraph Storage["Storage Layer"]
-        PostgreSQL[("PostgreSQL")]
-        Redis[("Redis Cache")]
-    end
-
-    %% Kafka
-    subgraph MessageBroker["Message Broker"]
-        Kafka["Apache Kafka"]
-        Zookeeper["Zookeeper"]
-        Zookeeper --> Kafka
-    end
-
-    %% Connections to DB & Redis
-    AuthService & UserService & MerchantService & OrderService & TransactionService & ProductService & CategoryService & CashierService & OrderItemService & RoleService -->|Read/Write| PostgreSQL
-    APIGateway & AuthService & UserService & MerchantService & OrderService & TransactionService & ProductService & CategoryService & CashierService & OrderItemService & RoleService -->|Cache/Verify| Redis
-
-    %% Kafka Event Streaming
-    OrderService -.->|Publish order events| Kafka
-    MerchantService -.->|Publish settlement events| Kafka
-    AuthService -.->|Publish auth events| Kafka
-    
-    Kafka -.->|Subscribe| TransactionService
-    Kafka -.->|Subscribe| UserService
-    Kafka -.->|Subscribe| MerchantService
-
-    %% Observability Connections
-    subgraph Observability["Observability Stack"]
-        Promtail["Promtail (Logs)"]
-        Loki["Grafana Loki"]
-        Prometheus["Prometheus (Metrics)"]
-        OtelCollector["OpenTelemetry Collector"]
-        Jaeger["Jaeger (Traces)"]
-        Grafana["Grafana Dashboards"]
-        
-        Promtail --> Loki
-        Prometheus --> Grafana
-        Loki --> Grafana
-        OtelCollector --> Prometheus
-        OtelCollector --> Jaeger
-        Jaeger --> Grafana
-    end
-
-    %% Telemetry hooks
-    APIGateway & Downstream_gRPC_Services -.->|Send Traces| OtelCollector
-    APIGateway & Downstream_gRPC_Services -.->|Scrape /metrics| Prometheus
-    APIGateway & Downstream_gRPC_Services -.->|Ship stdout logs| Promtail
-
-    classDef default fill:#1e1e2e,stroke:#89b4fa,color:#cdd6f4,stroke-width:1px;
-    classDef gateway fill:#1e293b,stroke:#94e2d5,color:#f0fdfa,font-weight:bold;
-    classDef core fill:#313244,stroke:#cba6f7,color:#f5e0dc,font-weight:bold;
-    classDef infra fill:#292524,stroke:#fab387,color:#fde68a;
-    classDef obs fill:#1a2e05,stroke:#a6e3a1,color:#d9f99d;
-
-    class APIGateway gateway;
-    class Downstream_gRPC_Services core;
-    class Storage,MessageBroker infra;
-    class Observability obs;
+```
+monolith-graphql-pointofsale-grpc/
+├── proto/                          # Protobuf definitions (12 domains)
+├── shared/                         # Shared Go module
+│   ├── pb/                         #   Generated protobuf Go code
+│   ├── domain/                     #   Domain models (record/request/response)
+│   ├── mapper/                     #   Domain ↔ Protobuf mappers
+│   ├── cache/                      #   Redis cache abstraction
+│   ├── observability/              #   Cache metrics + tracing metrics
+│   ├── errors/                     #   Custom error types
+│   └── errorhandler/               #   Error handling utilities
+├── pkg/                            # Platform-level Go module
+│   ├── auth/                       #   JWT token manager
+│   ├── database/                   #   PostgreSQL connection + migrations + seeders
+│   ├── kafka/                      #   Kafka producer/consumer wrapper
+│   ├── otel/                       #   OpenTelemetry initialization
+│   ├── resilience/                 #   Circuit breaker, rate limiter, load monitor
+│   ├── logger/                     #   Zap structured logger
+│   ├── server/                     #   gRPC server bootstrap
+│   ├── middleware/                 #   Shared middleware
+│   ├── email/                      #   Email client
+│   ├── hash/                       #   Password hashing
+│   ├── dotenv/                     #   Environment loader
+│   ├── upload_image/               #   Image upload handler
+│   ├── randomstring/               #   Random string generator
+│   └── utils/                      #   General utilities
+├── service/                        # All modular services
+│   ├── apigateway/                 #   GraphQL API Gateway (gqlgen + Playground)
+│   ├── auth/                       #   Authentication service
+│   ├── user/                       #   User management
+│   ├── role/                       #   RBAC role management
+│   ├── cashier/                    #   Cashier management service
+│   ├── category/                   #   Category management service
+│   ├── merchant/                   #   Merchant core & documents
+│   ├── product/                    #   Product management
+│   ├── order/                      #   Order management
+│   ├── order_item/                 #   Order item decomposition
+│   ├── transaction/                #   Payment/transaction processing
+│   ├── email/                      #   Email notification consumer
+│   └── migrate/                    #   Database migration runner
+├── deployments/
+│   └── local/                      #   Docker Compose configuration
+├── observability/                  #   Prometheus, Loki, OTel, Promtail configs
+├── nginx/                          #   NGINX reverse proxy configuration
+└── images/                         #   Documentation screenshots
 ```
 
 ---
 
-### **Production Kubernetes Architecture**
+## License
 
-In production, each service scales independently within a secure namespace, governed by Kubernetes Services and HPAs. The external NGINX gateway controller routes public internet client calls directly to the horizontally scaled `apigateway` instances:
-
-```mermaid
-flowchart TD
-    subgraph K8s["Kubernetes Cluster namespace: pos-production"]
-        NGINX["NGINX Ingress Gateway"]
-
-        %% POS Domain Services
-        subgraph Services["Domain Microservices"]
-            APIGateway["apigateway pod (gqlgen)"]
-            AuthService["auth-service pod"]
-            RoleService["role-service pod"]
-            UserService["user-service pod"]
-            CategoryService["category-service pod"]
-            CashierService["cashier-service pod"]
-            MerchantService["merchant-service pod"]
-            OrderItemService["order-item-service pod"]
-            OrderService["order-service pod"]
-            ProductService["product-service pod"]
-            TransactionService["transaction-service pod"]
-        end
-
-        %% Database & Cache
-        subgraph Infrastructure["Infrastructure Pods"]
-            PostgreSQL[("PostgreSQL Cluster")]
-            Redis[("Redis Master/Slave")]
-            Kafka["Kafka Broker Cluster"]
-            Zookeeper["Apache Zookeeper"]
-            Zookeeper --> Kafka
-        end
-
-        %% Observability
-        subgraph Observability["Observability Stack"]
-            Promtail["Promtail DaemonSet"]
-            Loki["Loki StatefulSet"]
-            Prometheus["Prometheus Operator"]
-            OtelCollector["OTel Collector Pod"]
-            Jaeger["Jaeger Instance"]
-            Grafana["Grafana Pod"]
-
-            Promtail --> Loki
-            Prometheus & Loki & Jaeger --> Grafana
-            OtelCollector --> Jaeger
-            OtelCollector --> Prometheus
-        end
-    end
-
-    %% Routing Flow
-    Internet((Internet Traffic)) -->|HTTPS / Port:443| NGINX
-    NGINX -->|HTTP / Port:5000| APIGateway
-
-    %% gRPC Lines
-    APIGateway -.->|gRPC| AuthService & RoleService & UserService & CategoryService & CashierService & MerchantService & OrderItemService & OrderService & ProductService & TransactionService
-
-    %% Stateful connections
-    Services -->|Persist| PostgreSQL
-    Services & APIGateway -->|Cache| Redis
-    Services -.->|Pub/Sub Events| Kafka
-
-    %% Observability Streams
-    Services & APIGateway -.->|Traces| OtelCollector
-    Services & APIGateway -.->|Scrape| Prometheus
-    Promtail -.->|Collect Logs| Services
-
-    classDef default fill:#1e1e2e,stroke:#89b4fa,color:#cdd6f4,stroke-width:1px;
-    classDef gateway fill:#1e293b,stroke:#94e2d5,color:#f0fdfa,font-weight:bold;
-    classDef core fill:#313244,stroke:#cba6f7,color:#f5e0dc,font-weight:bold;
-    classDef infra fill:#292524,stroke:#fab387,color:#fde68a;
-    classDef obs fill:#1a2e05,stroke:#a6e3a1,color:#d9f99d;
-
-    class APIGateway,NGINX gateway;
-    class Services core;
-    class Infrastructure infra;
-    class Observability obs;
-```
+This project is open-sourced for educational and development purposes.
 
 ---
 
-## Makefile & Justfile Commands
-
-The repository provides automated workflows to streamline development, code generation, and deployment tasks.
-
-| Command | Action |
-| :--- | :--- |
-| `just migrate` / `make migrate` | Execute versioned PostgreSQL migrations |
-| `just migrate-down` | Rollback the latest database migrations |
-| `just seeder` / `make seeder` | Populate tables with starter/mock datasets |
-| `just generate-proto` / `make generate-proto` | Compile all `.proto` models into standard Go gRPC packages |
-| `just generate-sql` / `make generate-sql` | Regenerate SQL queries and Go database code via `sqlc` |
-| `just build` / `make build` | Compile all domain binaries locally to `/bin` |
-| `just build-image` | Build Docker images for all services and gateways |
-| `just tidy-all` | Run `go mod tidy` in all Go module sub-directories |
-| `just up` / `make up` | Boot the full Docker Compose stack in detached mode |
-| `just down` / `make down` | Turn off and clean local docker resources |
+<p align="center">
+  Built with Go, gRPC, and a passion for clean architecture.
+</p>
