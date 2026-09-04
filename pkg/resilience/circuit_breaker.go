@@ -5,7 +5,7 @@ import (
 	"sync/atomic"
 	"time"
 
-	"github.com/MamangRust/monolith-point-of-sale-pkg/logger"
+	"github.com/MamangRust/monolith-graphql-pointofsale-pkg/logger"
 	"go.uber.org/zap"
 )
 

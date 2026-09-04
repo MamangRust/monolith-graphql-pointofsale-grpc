@@ -17,12 +17,11 @@ import (
 	graph "github.com/MamangRust/monolith-graphql-pointofsale-apigateway/internal/handler"
 	"github.com/MamangRust/monolith-graphql-pointofsale-apigateway/internal/middlewares"
 	mencache "github.com/MamangRust/monolith-graphql-pointofsale-apigateway/internal/redis"
-	"github.com/MamangRust/monolith-point-of-sale-pkg/auth"
-	"github.com/MamangRust/monolith-point-of-sale-pkg/dotenv"
-	"github.com/MamangRust/monolith-point-of-sale-pkg/kafka"
-	"github.com/MamangRust/monolith-point-of-sale-pkg/logger"
-	otel_pkg "github.com/MamangRust/monolith-point-of-sale-pkg/otel"
-	"github.com/prometheus/client_golang/prometheus/promhttp"
+	"github.com/MamangRust/monolith-graphql-pointofsale-pkg/auth"
+	"github.com/MamangRust/monolith-graphql-pointofsale-pkg/dotenv"
+	"github.com/MamangRust/monolith-graphql-pointofsale-pkg/kafka"
+	"github.com/MamangRust/monolith-graphql-pointofsale-pkg/logger"
+	otel_pkg "github.com/MamangRust/monolith-graphql-pointofsale-pkg/otel"
 	"github.com/redis/go-redis/v9"
 	"github.com/spf13/viper"
 	"github.com/vektah/gqlparser/v2/ast"
@@ -162,12 +161,17 @@ func RunClient() (*Client, func(), error) {
 
 	ctx := context.Background()
 
-	shutdownTracer, err := otel_pkg.InitTracerProvider("apigateway", ctx)
-	if err != nil {
-		fmt.Printf("Warning: Failed to initialize tracer provider: %v\n", err)
+	telemetry := otel_pkg.NewTelemetry(otel_pkg.Config{
+		ServiceName: "apigateway",
+		Endpoint:    viper.GetString("OTEL_ENDPOINT"),
+		Insecure:    true,
+	})
+
+	if err := telemetry.Init(ctx); err != nil {
+		fmt.Printf("Warning: Failed to initialize telemetry: %v\n", err)
 	}
 
-	log, err := logger.NewLogger("apigateway")
+	log, err := logger.NewLogger("apigateway", telemetry.GetLogger())
 	if err != nil {
 		return nil, nil, fmt.Errorf("failed to create logger: %w", err)
 	}
@@ -221,13 +225,6 @@ func RunClient() (*Client, func(), error) {
 		}
 	}()
 
-	go func() {
-		log.Info("Starting Prometheus metrics server on :8091")
-		if err := http.ListenAndServe(":8091", promhttp.Handler()); err != nil {
-			log.Fatal("Metrics server error", zap.Error(err))
-		}
-	}()
-
 	shutdown := func() {
 		_, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 		defer cancel()
@@ -235,10 +232,8 @@ func RunClient() (*Client, func(), error) {
 		log.Info("Shutting down GraphQL API Gateway...")
 		closeConnections(conns, log)
 
-		if shutdownTracer != nil {
-			if err := shutdownTracer(context.Background()); err != nil {
-				log.Error("Telemetry shutdown failed", zap.Error(err))
-			}
+		if err := telemetry.Shutdown(context.Background()); err != nil {
+			log.Error("Telemetry shutdown failed", zap.Error(err))
 		}
 
 		log.Info("Shutdown complete ✅")

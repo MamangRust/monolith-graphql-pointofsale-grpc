@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"github.com/MamangRust/monolith-graphql-pointofsale-apigateway/internal/model"
-	"github.com/MamangRust/monolith-point-of-sale-shared/cache"
+	"github.com/MamangRust/monolith-graphql-pointofsale-shared/cache"
 )
 
 const (
@@ -32,7 +32,7 @@ func NewTransactionQueryCache(store *cache.CacheStore) *transactionQueryCache {
 }
 
 func (t *transactionQueryCache) GetCachedTransactionsCache(ctx context.Context, req *model.FindAllTransactionInput) (*model.APIResponsePaginationTransaction, bool) {
-	key := fmt.Sprintf(transactionAllCacheKey, req.Page, req.PageSize, req.Search)
+	key := fmt.Sprintf(transactionAllCacheKey, req.Page, req.PageSize, safeString(req.Search))
 
 	result, found := cache.GetFromCache[model.APIResponsePaginationTransaction](ctx, t.store, key)
 
@@ -48,13 +48,13 @@ func (t *transactionQueryCache) SetCachedTransactionsCache(ctx context.Context, 
 		return
 	}
 
-	key := fmt.Sprintf(transactionAllCacheKey, req.Page, req.PageSize, req.Search)
+	key := fmt.Sprintf(transactionAllCacheKey, req.Page, req.PageSize, safeString(req.Search))
 
 	cache.SetToCache(ctx, t.store, key, res, ttlDefault)
 }
 
 func (t *transactionQueryCache) GetCachedTransactionByMerchant(ctx context.Context, req *model.FindAllTransactionMerchantInput) (*model.APIResponsePaginationTransaction, bool) {
-	key := fmt.Sprintf(transactionByMerchantCacheKey, req.MerchantID, req.Page, req.PageSize, req.Search)
+	key := fmt.Sprintf(transactionByMerchantCacheKey, req.MerchantID, req.Page, req.PageSize, safeString(req.Search))
 
 	result, found := cache.GetFromCache[model.APIResponsePaginationTransaction](ctx, t.store, key)
 
@@ -70,12 +70,12 @@ func (t *transactionQueryCache) SetCachedTransactionByMerchant(ctx context.Conte
 		return
 	}
 
-	key := fmt.Sprintf(transactionByMerchantCacheKey, req.MerchantID, req.Page, req.PageSize, req.Search)
+	key := fmt.Sprintf(transactionByMerchantCacheKey, req.MerchantID, req.Page, req.PageSize, safeString(req.Search))
 	cache.SetToCache(ctx, t.store, key, res, ttlDefault)
 }
 
 func (t *transactionQueryCache) GetCachedTransactionActiveCache(ctx context.Context, req *model.FindAllTransactionInput) (*model.APIResponsePaginationTransactionDeleteAt, bool) {
-	key := fmt.Sprintf(transactionActiveCacheKey, req.Page, req.PageSize, req.Search)
+	key := fmt.Sprintf(transactionActiveCacheKey, req.Page, req.PageSize, safeString(req.Search))
 
 	result, found := cache.GetFromCache[model.APIResponsePaginationTransactionDeleteAt](ctx, t.store, key)
 
@@ -91,12 +91,12 @@ func (t *transactionQueryCache) SetCachedTransactionActiveCache(ctx context.Cont
 		return
 	}
 
-	key := fmt.Sprintf(transactionActiveCacheKey, req.Page, req.PageSize, req.Search)
+	key := fmt.Sprintf(transactionActiveCacheKey, req.Page, req.PageSize, safeString(req.Search))
 	cache.SetToCache(ctx, t.store, key, res, ttlDefault)
 }
 
 func (t *transactionQueryCache) GetCachedTransactionTrashedCache(ctx context.Context, req *model.FindAllTransactionInput) (*model.APIResponsePaginationTransactionDeleteAt, bool) {
-	key := fmt.Sprintf(transactionTrashedCacheKey, req.Page, req.PageSize, req.Search)
+	key := fmt.Sprintf(transactionTrashedCacheKey, req.Page, req.PageSize, safeString(req.Search))
 
 	result, found := cache.GetFromCache[model.APIResponsePaginationTransactionDeleteAt](ctx, t.store, key)
 
@@ -112,7 +112,7 @@ func (t *transactionQueryCache) SetCachedTransactionTrashedCache(ctx context.Con
 		return
 	}
 
-	key := fmt.Sprintf(transactionTrashedCacheKey, req.Page, req.PageSize, req.Search)
+	key := fmt.Sprintf(transactionTrashedCacheKey, req.Page, req.PageSize, safeString(req.Search))
 	cache.SetToCache(ctx, t.store, key, res, ttlDefault)
 }
 
@@ -156,4 +156,11 @@ func (t *transactionQueryCache) SetCachedTransactionByOrderId(ctx context.Contex
 
 	key := fmt.Sprintf(transactionByOrderCacheKey, orderID)
 	cache.SetToCache(ctx, t.store, key, res, ttlDefault)
+}
+
+func safeString(s *string) string {
+	if s == nil {
+		return ""
+	}
+	return *s
 }

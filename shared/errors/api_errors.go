@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/MamangRust/monolith-point-of-sale-pkg/logger"
-	"github.com/MamangRust/monolith-point-of-sale-shared/observability"
+	"github.com/MamangRust/monolith-graphql-pointofsale-pkg/logger"
+	"github.com/MamangRust/monolith-graphql-pointofsale-shared/observability"
 	"github.com/labstack/echo/v4"
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/codes"

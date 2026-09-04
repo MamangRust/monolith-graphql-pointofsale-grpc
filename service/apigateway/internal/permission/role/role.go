@@ -9,10 +9,10 @@ import (
 	"time"
 
 	mencache "github.com/MamangRust/monolith-graphql-pointofsale-apigateway/internal/redis"
-	"github.com/MamangRust/monolith-point-of-sale-pkg/kafka"
-	"github.com/MamangRust/monolith-point-of-sale-pkg/logger"
-	"github.com/MamangRust/monolith-point-of-sale-shared/domain/requests"
-	"github.com/MamangRust/monolith-point-of-sale-shared/domain/response"
+	"github.com/MamangRust/monolith-graphql-pointofsale-pkg/kafka"
+	"github.com/MamangRust/monolith-graphql-pointofsale-pkg/logger"
+	"github.com/MamangRust/monolith-graphql-pointofsale-shared/domain/requests"
+	"github.com/MamangRust/monolith-graphql-pointofsale-shared/domain/response"
 	"github.com/google/uuid"
 	"go.uber.org/zap"
 )
@@ -47,13 +47,15 @@ func NewRolePermission(
 
 	handler := &roleResponseHandler{validator: p}
 
-	go func() {
-		err := k.StartConsumers([]string{responseTopic}, "role-permission-gateway", handler)
-		if err != nil {
-			p.logger.Fatal("Failed to start kafka consumer", zap.Error(err))
-			panic("failed to start kafka consumer: " + err.Error())
-		}
-	}()
+	if k != nil {
+		go func() {
+			err := k.StartConsumers([]string{responseTopic}, "role-permission-gateway", handler)
+			if err != nil {
+				p.logger.Fatal("Failed to start kafka consumer", zap.Error(err))
+				panic("failed to start kafka consumer: " + err.Error())
+			}
+		}()
+	}
 
 	return p
 }
@@ -84,7 +86,7 @@ func (p *rolePermission) ValidateRole(ctx context.Context, userID int) ([]string
 		p.mu.Unlock()
 	}()
 
-	if err := p.sendValidationRequest(userID, correlationID); err != nil {
+	if err := p.sendValidationRequest(ctx, userID, correlationID); err != nil {
 		return nil, err
 	}
 
@@ -147,7 +149,7 @@ func (p *rolePermission) CheckRole(ctx context.Context, userID int, requiredRole
 	return errors.New("role not permitted")
 }
 
-func (p *rolePermission) sendValidationRequest(userID int, correlationID string) error {
+func (p *rolePermission) sendValidationRequest(ctx context.Context, userID int, correlationID string) error {
 	payload := requests.RoleRequestPayload{
 		UserID:        userID,
 		CorrelationID: correlationID,
@@ -160,7 +162,7 @@ func (p *rolePermission) sendValidationRequest(userID int, correlationID string)
 		return errors.New("failed to encode payload")
 	}
 
-	err = p.kafka.SendMessage(p.requestTopic, correlationID, data)
+	err = p.kafka.SendMessage(ctx, p.requestTopic, correlationID, data)
 	if err != nil {
 		p.logger.Error("Failed to send Kafka message", zap.Error(err), zap.String("correlation_id", correlationID))
 		return errors.New("failed to send Kafka message")

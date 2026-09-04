@@ -3,7 +3,7 @@ package middleware
 import (
 	"context"
 
-	"github.com/MamangRust/monolith-point-of-sale-pkg/resilience"
+	"github.com/MamangRust/monolith-graphql-pointofsale-pkg/resilience"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"

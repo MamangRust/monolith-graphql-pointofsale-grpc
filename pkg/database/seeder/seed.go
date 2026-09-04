@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"time"
 
-	db "github.com/MamangRust/monolith-point-of-sale-pkg/database/schema"
-	"github.com/MamangRust/monolith-point-of-sale-pkg/hash"
-	"github.com/MamangRust/monolith-point-of-sale-pkg/logger"
+	db "github.com/MamangRust/monolith-graphql-pointofsale-pkg/database/schema"
+	"github.com/MamangRust/monolith-graphql-pointofsale-pkg/hash"
+	"github.com/MamangRust/monolith-graphql-pointofsale-pkg/logger"
 )
 
 type Deps struct {
@@ -91,3 +91,12 @@ func (s *Seeder) seedWithDelay(entityName string, seedFunc func() error) error {
 	time.Sleep(30 * time.Second)
 	return nil
 }
+
+func ptrString(s string) *string {
+	return &s
+}
+
+func ptrInt32(i int32) *int32 {
+	return &i
+}
+

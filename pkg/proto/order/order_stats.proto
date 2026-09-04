@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+package pb.order;
+
+import "common/api.proto";
+import "google/protobuf/empty.proto";
+import "order/order_common.proto";
+
+option go_package = "github.com/MamangRust/monolith-graphql-pointofsale-pb/order";
+
+service OrderStatsService {
+    rpc FindMonthlyTotalRevenue(FindYearMonthTotalRevenue) returns (ApiResponseOrderMonthlyTotalRevenue){}
+    rpc FindYearlyTotalRevenue(FindYearTotalRevenue) returns (ApiResponseOrderYearlyTotalRevenue){}
+    rpc FindMonthlyTotalRevenueById(FindYearMonthTotalRevenueById) returns (ApiResponseOrderMonthlyTotalRevenue){}
+    rpc FindYearlyTotalRevenueById(FindYearTotalRevenueById) returns (ApiResponseOrderYearlyTotalRevenue){}
+    rpc FindMonthlyTotalRevenueByMerchant(FindYearMonthTotalRevenueByMerchant) returns (ApiResponseOrderMonthlyTotalRevenue){}
+    rpc FindYearlyTotalRevenueByMerchant(FindYearTotalRevenueByMerchant) returns (ApiResponseOrderYearlyTotalRevenue){}
+    rpc FindMonthlyRevenue(FindYearOrder) returns(ApiResponseOrderMonthly);
+    rpc FindYearlyRevenue(FindYearOrder) returns(ApiResponseOrderYearly);
+    rpc FindMonthlyRevenueByMerchant(FindYearOrderByMerchant) returns(ApiResponseOrderMonthly);
+    rpc FindYearlyRevenueByMerchant(FindYearOrderByMerchant) returns(ApiResponseOrderYearly);
+}

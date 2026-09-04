@@ -2,7 +2,7 @@ package mapper
 
 import (
 	"github.com/MamangRust/monolith-graphql-pointofsale-apigateway/internal/model"
-	pb "github.com/MamangRust/monolith-graphql-pointofsale-pb/api"
+	pb "github.com/MamangRust/monolith-graphql-pointofsale-pb/common"
 )
 
 func MapPaginationMeta(s *pb.PaginationMeta) *model.PaginationMeta {

@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/MamangRust/monolith-point-of-sale-pkg/logger"
+	"github.com/MamangRust/monolith-graphql-pointofsale-pkg/logger"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/spf13/viper"
 	"go.uber.org/zap"

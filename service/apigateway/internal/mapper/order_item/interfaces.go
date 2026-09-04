@@ -2,7 +2,7 @@ package orderitemgraphqlmapper
 
 import (
 	"github.com/MamangRust/monolith-graphql-pointofsale-apigateway/internal/model"
-	pb "github.com/MamangRust/monolith-graphql-pointofsale-pb/order_item"
+	pb "github.com/MamangRust/monolith-graphql-pointofsale-pb"
 )
 
 type OrderItemGraphqlMapper interface {

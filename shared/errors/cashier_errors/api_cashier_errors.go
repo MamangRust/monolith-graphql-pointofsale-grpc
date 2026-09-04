@@ -3,7 +3,7 @@ package cashier_errors
 import (
 	"net/http"
 
-	"github.com/MamangRust/monolith-point-of-sale-shared/domain/response"
+	"github.com/MamangRust/monolith-graphql-pointofsale-shared/domain/response"
 
 	"github.com/labstack/echo/v4"
 )

@@ -4,8 +4,8 @@ import (
 	"context"
 	"fmt"
 
-	db "github.com/MamangRust/monolith-point-of-sale-pkg/database/schema"
-	"github.com/MamangRust/monolith-point-of-sale-pkg/logger"
+	db "github.com/MamangRust/monolith-graphql-pointofsale-pkg/database/schema"
+	"github.com/MamangRust/monolith-graphql-pointofsale-pkg/logger"
 
 	"go.uber.org/zap"
 )
@@ -26,6 +26,8 @@ func NewRoleSeeder(db *db.Queries, ctx context.Context, logger logger.LoggerInte
 
 func (r *roleSeeder) Seed() error {
 	randomRoles := []string{
+		"ROLE_ADMIN",
+		"Admin Access 1",
 		"Super Admin",
 		"Admin",
 		"Store Manager",

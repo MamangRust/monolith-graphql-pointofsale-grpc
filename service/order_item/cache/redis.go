@@ -1,0 +1,19 @@
+package mencache
+
+import (
+	"github.com/MamangRust/monolith-graphql-pointofsale-shared/cache"
+)
+
+type Mencache interface {
+	OrderItemQueryCache
+}
+
+type mencache struct {
+	OrderItemQueryCache
+}
+
+func NewMencache(cacheStore *cache.CacheStore) Mencache {
+	return &mencache{
+		OrderItemQueryCache: NewOrderItemQueryCache(cacheStore),
+	}
+}

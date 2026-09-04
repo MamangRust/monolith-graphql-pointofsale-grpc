@@ -1,9 +1,10 @@
 package protomapper
 
 import (
-	pbutils "github.com/MamangRust/monolith-graphql-pointofsale-pb/api"
-	pb "github.com/MamangRust/monolith-graphql-pointofsale-pb/role"
-	"github.com/MamangRust/monolith-point-of-sale-shared/domain/response"
+	"github.com/MamangRust/monolith-graphql-pointofsale-shared/domain/response"
+
+	pbcommon "github.com/MamangRust/monolith-graphql-pointofsale-pb/common"
+	pbrole "github.com/MamangRust/monolith-graphql-pointofsale-pb/role"
 )
 
 type roleProtoMapper struct {
@@ -13,38 +14,38 @@ func NewRoleProtoMapper() *roleProtoMapper {
 	return &roleProtoMapper{}
 }
 
-func (s *roleProtoMapper) ToProtoResponseRoleAll(status string, message string) *pb.ApiResponseRoleAll {
-	return &pb.ApiResponseRoleAll{
+func (s *roleProtoMapper) ToProtoResponseRoleAll(status string, message string) *pbrole.ApiResponseRoleAll {
+	return &pbrole.ApiResponseRoleAll{
 		Status:  status,
 		Message: message,
 	}
 }
 
-func (s *roleProtoMapper) ToProtoResponseRoleDelete(status string, message string) *pb.ApiResponseRoleDelete {
-	return &pb.ApiResponseRoleDelete{
+func (s *roleProtoMapper) ToProtoResponseRoleDelete(status string, message string) *pbrole.ApiResponseRoleDelete {
+	return &pbrole.ApiResponseRoleDelete{
 		Status:  status,
 		Message: message,
 	}
 }
 
-func (s *roleProtoMapper) ToProtoResponseRole(status string, message string, pbResponse *response.RoleResponse) *pb.ApiResponseRole {
-	return &pb.ApiResponseRole{
+func (s *roleProtoMapper) ToProtoResponseRole(status string, message string, pbResponse *response.RoleResponse) *pbrole.ApiResponseRole {
+	return &pbrole.ApiResponseRole{
 		Status:  status,
 		Message: message,
 		Data:    s.mapResponseRole(pbResponse),
 	}
 }
 
-func (s *roleProtoMapper) ToProtoResponsesRole(status string, message string, pbResponse []*response.RoleResponse) *pb.ApiResponsesRole {
-	return &pb.ApiResponsesRole{
+func (s *roleProtoMapper) ToProtoResponsesRole(status string, message string, pbResponse []*response.RoleResponse) *pbrole.ApiResponsesRole {
+	return &pbrole.ApiResponsesRole{
 		Status:  status,
 		Message: message,
 		Data:    s.mapResponsesRole(pbResponse),
 	}
 }
 
-func (s *roleProtoMapper) ToProtoResponsePaginationRole(pagination *pbutils.PaginationMeta, status string, message string, pbResponse []*response.RoleResponse) *pb.ApiResponsePaginationRole {
-	return &pb.ApiResponsePaginationRole{
+func (s *roleProtoMapper) ToProtoResponsePaginationRole(pagination *pbcommon.PaginationMeta, status string, message string, pbResponse []*response.RoleResponse) *pbrole.ApiResponsePaginationRole {
+	return &pbrole.ApiResponsePaginationRole{
 		Status:     status,
 		Message:    message,
 		Data:       s.mapResponsesRole(pbResponse),
@@ -52,8 +53,8 @@ func (s *roleProtoMapper) ToProtoResponsePaginationRole(pagination *pbutils.Pagi
 	}
 }
 
-func (s *roleProtoMapper) ToProtoResponsePaginationRoleDeleteAt(pagination *pbutils.PaginationMeta, status string, message string, pbResponse []*response.RoleResponseDeleteAt) *pb.ApiResponsePaginationRoleDeleteAt {
-	return &pb.ApiResponsePaginationRoleDeleteAt{
+func (s *roleProtoMapper) ToProtoResponsePaginationRoleDeleteAt(pagination *pbcommon.PaginationMeta, status string, message string, pbResponse []*response.RoleResponseDeleteAt) *pbrole.ApiResponsePaginationRoleDeleteAt {
+	return &pbrole.ApiResponsePaginationRoleDeleteAt{
 		Status:     status,
 		Message:    message,
 		Data:       s.mapResponsesRoleDeleteAt(pbResponse),
@@ -61,8 +62,8 @@ func (s *roleProtoMapper) ToProtoResponsePaginationRoleDeleteAt(pagination *pbut
 	}
 }
 
-func (s *roleProtoMapper) mapResponseRole(role *response.RoleResponse) *pb.RoleResponse {
-	return &pb.RoleResponse{
+func (s *roleProtoMapper) mapResponseRole(role *response.RoleResponse) *pbrole.RoleResponse {
+	return &pbrole.RoleResponse{
 		Id:        int32(role.ID),
 		Name:      role.Name,
 		CreatedAt: role.CreatedAt,
@@ -70,8 +71,8 @@ func (s *roleProtoMapper) mapResponseRole(role *response.RoleResponse) *pb.RoleR
 	}
 }
 
-func (s *roleProtoMapper) mapResponsesRole(roles []*response.RoleResponse) []*pb.RoleResponse {
-	var responseRoles []*pb.RoleResponse
+func (s *roleProtoMapper) mapResponsesRole(roles []*response.RoleResponse) []*pbrole.RoleResponse {
+	var responseRoles []*pbrole.RoleResponse
 
 	for _, role := range roles {
 		responseRoles = append(responseRoles, s.mapResponseRole(role))
@@ -80,8 +81,8 @@ func (s *roleProtoMapper) mapResponsesRole(roles []*response.RoleResponse) []*pb
 	return responseRoles
 }
 
-func (s *roleProtoMapper) mapResponseRoleDeleteAt(role *response.RoleResponseDeleteAt) *pb.RoleResponseDeleteAt {
-	return &pb.RoleResponseDeleteAt{
+func (s *roleProtoMapper) mapResponseRoleDeleteAt(role *response.RoleResponseDeleteAt) *pbrole.RoleResponseDeleteAt {
+	return &pbrole.RoleResponseDeleteAt{
 		Id:        int32(role.ID),
 		Name:      role.Name,
 		CreatedAt: role.CreatedAt,
@@ -90,8 +91,8 @@ func (s *roleProtoMapper) mapResponseRoleDeleteAt(role *response.RoleResponseDel
 	}
 }
 
-func (s *roleProtoMapper) mapResponsesRoleDeleteAt(roles []*response.RoleResponseDeleteAt) []*pb.RoleResponseDeleteAt {
-	var responseRoles []*pb.RoleResponseDeleteAt
+func (s *roleProtoMapper) mapResponsesRoleDeleteAt(roles []*response.RoleResponseDeleteAt) []*pbrole.RoleResponseDeleteAt {
+	var responseRoles []*pbrole.RoleResponseDeleteAt
 
 	for _, role := range roles {
 		responseRoles = append(responseRoles, s.mapResponseRoleDeleteAt(role))

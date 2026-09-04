@@ -9,8 +9,8 @@ import (
 	"sync/atomic"
 	"time"
 
-	"github.com/MamangRust/monolith-point-of-sale-pkg/logger"
-	"github.com/MamangRust/monolith-point-of-sale-shared/observability"
+	"github.com/MamangRust/monolith-graphql-pointofsale-pkg/logger"
+	"github.com/MamangRust/monolith-graphql-pointofsale-shared/observability"
 	"github.com/redis/go-redis/v9"
 	"go.uber.org/zap"
 )

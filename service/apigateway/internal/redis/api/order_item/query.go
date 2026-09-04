@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"github.com/MamangRust/monolith-graphql-pointofsale-apigateway/internal/model"
-	"github.com/MamangRust/monolith-point-of-sale-shared/cache"
+	"github.com/MamangRust/monolith-graphql-pointofsale-shared/cache"
 )
 
 const (
@@ -28,7 +28,7 @@ func NewOrderItemQueryCache(store *cache.CacheStore) *orderItemQueryCache {
 }
 
 func (o *orderItemQueryCache) GetCachedOrderItemsAll(ctx context.Context, req *model.FindAllOrderItemInput) (*model.APIResponsePaginationOrderItem, bool) {
-	key := fmt.Sprintf(orderItemAllCacheKey, req.Page, req.PageSize, req.Search)
+	key := fmt.Sprintf(orderItemAllCacheKey, req.Page, req.PageSize, safeString(req.Search))
 
 	result, found := cache.GetFromCache[model.APIResponsePaginationOrderItem](ctx, o.store, key)
 
@@ -44,13 +44,13 @@ func (o *orderItemQueryCache) SetCachedOrderItemsAll(ctx context.Context, req *m
 		return
 	}
 
-	key := fmt.Sprintf(orderItemAllCacheKey, req.Page, req.PageSize, req.Search)
+	key := fmt.Sprintf(orderItemAllCacheKey, req.Page, req.PageSize, safeString(req.Search))
 
 	cache.SetToCache(ctx, o.store, key, res, ttlDefault)
 }
 
 func (o *orderItemQueryCache) GetCachedOrderItemActive(ctx context.Context, req *model.FindAllOrderItemInput) (*model.APIResponsePaginationOrderItemDeleteAt, bool) {
-	key := fmt.Sprintf(orderItemActiveCacheKey, req.Page, req.PageSize, req.Search)
+	key := fmt.Sprintf(orderItemActiveCacheKey, req.Page, req.PageSize, safeString(req.Search))
 
 	result, found := cache.GetFromCache[model.APIResponsePaginationOrderItemDeleteAt](ctx, o.store, key)
 
@@ -66,12 +66,12 @@ func (o *orderItemQueryCache) SetCachedOrderItemActive(ctx context.Context, req 
 		return
 	}
 
-	key := fmt.Sprintf(orderItemActiveCacheKey, req.Page, req.PageSize, req.Search)
+	key := fmt.Sprintf(orderItemActiveCacheKey, req.Page, req.PageSize, safeString(req.Search))
 	cache.SetToCache(ctx, o.store, key, res, ttlDefault)
 }
 
 func (o *orderItemQueryCache) GetCachedOrderItemTrashed(ctx context.Context, req *model.FindAllOrderItemInput) (*model.APIResponsePaginationOrderItemDeleteAt, bool) {
-	key := fmt.Sprintf(orderItemTrashedCacheKey, req.Page, req.PageSize, req.Search)
+	key := fmt.Sprintf(orderItemTrashedCacheKey, req.Page, req.PageSize, safeString(req.Search))
 	result, found := cache.GetFromCache[model.APIResponsePaginationOrderItemDeleteAt](ctx, o.store, key)
 
 	if !found || result == nil {
@@ -86,7 +86,7 @@ func (o *orderItemQueryCache) SetCachedOrderItemTrashed(ctx context.Context, req
 		return
 	}
 
-	key := fmt.Sprintf(orderItemTrashedCacheKey, req.Page, req.PageSize, req.Search)
+	key := fmt.Sprintf(orderItemTrashedCacheKey, req.Page, req.PageSize, safeString(req.Search))
 	cache.SetToCache(ctx, o.store, key, res, ttlDefault)
 }
 
@@ -108,4 +108,11 @@ func (o *orderItemQueryCache) SetCachedOrderItems(ctx context.Context, res *mode
 
 	key := fmt.Sprintf(orderItemByIdCacheKey, res.Data[0].OrderID)
 	cache.SetToCache(ctx, o.store, key, res, ttlDefault)
+}
+
+func safeString(s *string) string {
+	if s == nil {
+		return ""
+	}
+	return *s
 }

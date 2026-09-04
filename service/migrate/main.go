@@ -7,7 +7,7 @@ import (
 	"log"
 	"os"
 
-	"github.com/MamangRust/monolith-point-of-sale-pkg/dotenv"
+	"github.com/MamangRust/monolith-graphql-pointofsale-pkg/dotenv"
 	_ "github.com/jackc/pgx/v5/stdlib"
 	"github.com/pressly/goose/v3"
 	"github.com/spf13/viper"

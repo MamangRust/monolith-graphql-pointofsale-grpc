@@ -6,18 +6,16 @@ package graph
 
 import (
 	"context"
-
-	"github.com/MamangRust/monolith-point-of-sale-shared/errors"
+	errors "github.com/MamangRust/monolith-graphql-pointofsale-shared/errors"
 
 	"github.com/MamangRust/monolith-graphql-pointofsale-apigateway/internal/model"
-	model1 "github.com/MamangRust/monolith-graphql-pointofsale-apigateway/internal/model"
 	pb "github.com/MamangRust/monolith-graphql-pointofsale-pb/merchant"
-	"github.com/MamangRust/monolith-point-of-sale-shared/domain/requests"
+	"github.com/MamangRust/monolith-graphql-pointofsale-shared/domain/requests"
 	"google.golang.org/protobuf/types/known/emptypb"
 )
 
 // CreateMerchant is the resolver for the createMerchant field.
-func (r *mutationResolver) CreateMerchant(ctx context.Context, input model1.CreateMerchantInput) (*model1.APIResponseMerchant, error) {
+func (r *mutationResolver) CreateMerchant(ctx context.Context, input model.CreateMerchantInput) (*model.APIResponseMerchant, error) {
 	return ResolverHandle(r.ResolverHandle, "CreateMerchant", ctx, func(ctx context.Context) (*model.APIResponseMerchant, error) {
 		req := &requests.CreateMerchantRequest{
 			UserID:       int(input.UserID),
@@ -58,7 +56,7 @@ func (r *mutationResolver) CreateMerchant(ctx context.Context, input model1.Crea
 }
 
 // UpdateMerchant is the resolver for the updateMerchant field.
-func (r *mutationResolver) UpdateMerchant(ctx context.Context, input model1.UpdateMerchantInput) (*model1.APIResponseMerchant, error) {
+func (r *mutationResolver) UpdateMerchant(ctx context.Context, input model.UpdateMerchantInput) (*model.APIResponseMerchant, error) {
 	return ResolverHandle(r.ResolverHandle, "UpdateMerchant", ctx, func(ctx context.Context) (*model.APIResponseMerchant, error) {
 		id := int(input.MerchantID)
 
@@ -107,7 +105,7 @@ func (r *mutationResolver) UpdateMerchant(ctx context.Context, input model1.Upda
 }
 
 // TrashedMerchant is the resolver for the trashedMerchant field.
-func (r *mutationResolver) TrashedMerchant(ctx context.Context, input model1.FindByIDMerchantInput) (*model1.APIResponseMerchantDeleteAt, error) {
+func (r *mutationResolver) TrashedMerchant(ctx context.Context, input model.FindByIDMerchantInput) (*model.APIResponseMerchantDeleteAt, error) {
 	return ResolverHandle(r.ResolverHandle, "TrashedMerchant", ctx, func(ctx context.Context) (*model.APIResponseMerchantDeleteAt, error) {
 		id := int(input.ID)
 
@@ -133,7 +131,7 @@ func (r *mutationResolver) TrashedMerchant(ctx context.Context, input model1.Fin
 }
 
 // RestoreMerchant is the resolver for the restoreMerchant field.
-func (r *mutationResolver) RestoreMerchant(ctx context.Context, input model1.FindByIDMerchantInput) (*model1.APIResponseMerchantDeleteAt, error) {
+func (r *mutationResolver) RestoreMerchant(ctx context.Context, input model.FindByIDMerchantInput) (*model.APIResponseMerchantDeleteAt, error) {
 	return ResolverHandle(r.ResolverHandle, "RestoreMerchant", ctx, func(ctx context.Context) (*model.APIResponseMerchantDeleteAt, error) {
 		id := int(input.ID)
 
@@ -159,7 +157,7 @@ func (r *mutationResolver) RestoreMerchant(ctx context.Context, input model1.Fin
 }
 
 // DeleteMerchantPermanent is the resolver for the deleteMerchantPermanent field.
-func (r *mutationResolver) DeleteMerchantPermanent(ctx context.Context, input model1.FindByIDMerchantInput) (*model1.APIResponseMerchantDelete, error) {
+func (r *mutationResolver) DeleteMerchantPermanent(ctx context.Context, input model.FindByIDMerchantInput) (*model.APIResponseMerchantDelete, error) {
 	return ResolverHandle(r.ResolverHandle, "DeleteMerchantPermanent", ctx, func(ctx context.Context) (*model.APIResponseMerchantDelete, error) {
 		id := int(input.ID)
 
@@ -182,7 +180,7 @@ func (r *mutationResolver) DeleteMerchantPermanent(ctx context.Context, input mo
 }
 
 // RestoreAllMerchant is the resolver for the restoreAllMerchant field.
-func (r *mutationResolver) RestoreAllMerchant(ctx context.Context) (*model1.APIResponseMerchantAll, error) {
+func (r *mutationResolver) RestoreAllMerchant(ctx context.Context) (*model.APIResponseMerchantAll, error) {
 	return ResolverHandle(r.ResolverHandle, "RestoreAllMerchant", ctx, func(ctx context.Context) (*model.APIResponseMerchantAll, error) {
 		res, err := r.MerchantGraphql.MerchantClient.RestoreAllMerchant(ctx, &emptypb.Empty{})
 		if err != nil {
@@ -196,9 +194,9 @@ func (r *mutationResolver) RestoreAllMerchant(ctx context.Context) (*model1.APIR
 }
 
 // DeleteAllMerchantPermanent is the resolver for the deleteAllMerchantPermanent field.
-func (r *mutationResolver) DeleteAllMerchantPermanent(ctx context.Context) (*model1.APIResponseMerchantAll, error) {
+func (r *mutationResolver) DeleteAllMerchantPermanent(ctx context.Context) (*model.APIResponseMerchantAll, error) {
 	return ResolverHandle(r.ResolverHandle, "DeleteAllMerchantPermanent", ctx, func(ctx context.Context) (*model.APIResponseMerchantAll, error) {
-		res, err := r.MerchantGraphql.MerchantClient.DeleteAllPermanent(ctx, &emptypb.Empty{})
+		res, err := r.MerchantGraphql.MerchantClient.DeleteAllMerchantPermanent(ctx, &emptypb.Empty{})
 		if err != nil {
 			return nil, r.handleGraphQLError(err, "DeleteAllMerchantPermanent")
 		}
@@ -210,7 +208,7 @@ func (r *mutationResolver) DeleteAllMerchantPermanent(ctx context.Context) (*mod
 }
 
 // FindAllMerchant is the resolver for the findAllMerchant field.
-func (r *queryResolver) FindAllMerchant(ctx context.Context, input model1.FindAllMerchantInput) (*model1.APIResponsePaginationMerchant, error) {
+func (r *queryResolver) FindAllMerchant(ctx context.Context, input model.FindAllMerchantInput) (*model.APIResponsePaginationMerchant, error) {
 	return ResolverHandle(r.ResolverHandle, "FindAllMerchant", ctx, func(ctx context.Context) (*model.APIResponsePaginationMerchant, error) {
 		page := int32(*input.Page)
 		pageSize := int32(*input.PageSize)
@@ -234,7 +232,7 @@ func (r *queryResolver) FindAllMerchant(ctx context.Context, input model1.FindAl
 		req := &pb.FindAllMerchantRequest{
 			Page:     int32(page),
 			PageSize: int32(pageSize),
-			Search:   *input.Search,
+			Search:   safeString(input.Search),
 		}
 		merchants, err := r.MerchantGraphql.MerchantClient.FindAll(ctx, req)
 		if err != nil {
@@ -251,7 +249,7 @@ func (r *queryResolver) FindAllMerchant(ctx context.Context, input model1.FindAl
 }
 
 // FindByIDMerchant is the resolver for the findByIdMerchant field.
-func (r *queryResolver) FindByIDMerchant(ctx context.Context, input model1.FindByIDMerchantInput) (*model1.APIResponseMerchant, error) {
+func (r *queryResolver) FindByIDMerchant(ctx context.Context, input model.FindByIDMerchantInput) (*model.APIResponseMerchant, error) {
 	return ResolverHandle(r.ResolverHandle, "FindByIDMerchant", ctx, func(ctx context.Context) (*model.APIResponseMerchant, error) {
 		id := int(input.ID)
 
@@ -278,7 +276,7 @@ func (r *queryResolver) FindByIDMerchant(ctx context.Context, input model1.FindB
 }
 
 // FindByActiveMerchant is the resolver for the findByActiveMerchant field.
-func (r *queryResolver) FindByActiveMerchant(ctx context.Context, input model1.FindAllMerchantInput) (*model1.APIResponsePaginationMerchantDeleteAt, error) {
+func (r *queryResolver) FindByActiveMerchant(ctx context.Context, input model.FindAllMerchantInput) (*model.APIResponsePaginationMerchantDeleteAt, error) {
 	return ResolverHandle(r.ResolverHandle, "FindByActiveMerchant", ctx, func(ctx context.Context) (*model.APIResponsePaginationMerchantDeleteAt, error) {
 
 		page := int32(*input.Page)
@@ -303,7 +301,7 @@ func (r *queryResolver) FindByActiveMerchant(ctx context.Context, input model1.F
 		req := &pb.FindAllMerchantRequest{
 			Page:     int32(page),
 			PageSize: int32(pageSize),
-			Search:   *input.Search,
+			Search:   safeString(input.Search),
 		}
 		merchants, err := r.MerchantGraphql.MerchantClient.FindByActive(ctx, req)
 		if err != nil {
@@ -320,7 +318,7 @@ func (r *queryResolver) FindByActiveMerchant(ctx context.Context, input model1.F
 }
 
 // FindByTrashedMerchant is the resolver for the findByTrashedMerchant field.
-func (r *queryResolver) FindByTrashedMerchant(ctx context.Context, input model1.FindAllMerchantInput) (*model1.APIResponsePaginationMerchantDeleteAt, error) {
+func (r *queryResolver) FindByTrashedMerchant(ctx context.Context, input model.FindAllMerchantInput) (*model.APIResponsePaginationMerchantDeleteAt, error) {
 	return ResolverHandle(r.ResolverHandle, "FindByTrashedMerchant", ctx, func(ctx context.Context) (*model.APIResponsePaginationMerchantDeleteAt, error) {
 		page := int32(*input.Page)
 		pageSize := int32(*input.PageSize)
@@ -344,7 +342,7 @@ func (r *queryResolver) FindByTrashedMerchant(ctx context.Context, input model1.
 		req := &pb.FindAllMerchantRequest{
 			Page:     int32(page),
 			PageSize: int32(pageSize),
-			Search:   *input.Search,
+			Search:   safeString(input.Search),
 		}
 		merchants, err := r.MerchantGraphql.MerchantClient.FindByTrashed(ctx, req)
 		if err != nil {

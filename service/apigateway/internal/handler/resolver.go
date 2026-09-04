@@ -33,24 +33,24 @@ import (
 	transaction_cache "github.com/MamangRust/monolith-graphql-pointofsale-apigateway/internal/redis/api/transaction"
 	user_cache "github.com/MamangRust/monolith-graphql-pointofsale-apigateway/internal/redis/api/user"
 
-	authpb "github.com/MamangRust/monolith-graphql-pointofsale-pb/auth"
+	authpb "github.com/MamangRust/monolith-graphql-pointofsale-pb"
+	orderitempb "github.com/MamangRust/monolith-graphql-pointofsale-pb"
 	cashierpb "github.com/MamangRust/monolith-graphql-pointofsale-pb/cashier"
 	categorypb "github.com/MamangRust/monolith-graphql-pointofsale-pb/category"
 	merchantpb "github.com/MamangRust/monolith-graphql-pointofsale-pb/merchant"
 	merchantdocumentpb "github.com/MamangRust/monolith-graphql-pointofsale-pb/merchant_document"
 	orderpb "github.com/MamangRust/monolith-graphql-pointofsale-pb/order"
-	orderitempb "github.com/MamangRust/monolith-graphql-pointofsale-pb/order_item"
 	productpb "github.com/MamangRust/monolith-graphql-pointofsale-pb/product"
 	rolepb "github.com/MamangRust/monolith-graphql-pointofsale-pb/role"
 	transactionpb "github.com/MamangRust/monolith-graphql-pointofsale-pb/transaction"
 	userpb "github.com/MamangRust/monolith-graphql-pointofsale-pb/user"
 
-	"github.com/MamangRust/monolith-point-of-sale-pkg/kafka"
-	"github.com/MamangRust/monolith-point-of-sale-pkg/logger"
-	"github.com/MamangRust/monolith-point-of-sale-pkg/upload_image"
-	"github.com/MamangRust/monolith-point-of-sale-shared/errors"
-	sharedErrors "github.com/MamangRust/monolith-point-of-sale-shared/errors"
-	"github.com/MamangRust/monolith-point-of-sale-shared/observability"
+	"github.com/MamangRust/monolith-graphql-pointofsale-pkg/kafka"
+	"github.com/MamangRust/monolith-graphql-pointofsale-pkg/logger"
+	"github.com/MamangRust/monolith-graphql-pointofsale-pkg/upload_image"
+	"github.com/MamangRust/monolith-graphql-pointofsale-shared/errors"
+	sharedErrors "github.com/MamangRust/monolith-graphql-pointofsale-shared/errors"
+	"github.com/MamangRust/monolith-graphql-pointofsale-shared/observability"
 	"github.com/go-playground/validator/v10"
 	"google.golang.org/grpc"
 )
@@ -80,7 +80,7 @@ type UserClient struct {
 }
 
 type RoleClient struct {
-	rolepb.RoleServiceClient
+	rolepb.RoleQueryServiceClient
 	rolepb.RoleCommandServiceClient
 }
 
@@ -261,7 +261,7 @@ func NewResolver(
 		},
 		RoleGraphql: RoleHandleGraphql{
 			RoleClient: RoleClient{
-				RoleServiceClient:        rolepb.NewRoleServiceClient(deps.Clients.RoleClient),
+				RoleQueryServiceClient:   rolepb.NewRoleQueryServiceClient(deps.Clients.RoleClient),
 				RoleCommandServiceClient: rolepb.NewRoleCommandServiceClient(deps.Clients.RoleClient),
 			},
 			Kafka:      deps.Kafka,
@@ -343,7 +343,7 @@ func NewResolver(
 			Logger:      deps.Logger,
 			Mapping:     productgraphqlmapper.NewProductGraphqlMapper(),
 			Cache:       cacheProduct,
-			ImageUpload: upload_image.NewImageUpload(),
+			ImageUpload: upload_image.NewImageUpload(deps.Logger),
 		},
 		TransactionGraphql: TransactionHandleGraphql{
 			TransactionClient: TransactionClient{

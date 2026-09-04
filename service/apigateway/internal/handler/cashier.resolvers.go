@@ -6,18 +6,16 @@ package graph
 
 import (
 	"context"
-
-	"github.com/MamangRust/monolith-point-of-sale-shared/errors"
+	errors "github.com/MamangRust/monolith-graphql-pointofsale-shared/errors"
 
 	"github.com/MamangRust/monolith-graphql-pointofsale-apigateway/internal/model"
-	model1 "github.com/MamangRust/monolith-graphql-pointofsale-apigateway/internal/model"
 	pb "github.com/MamangRust/monolith-graphql-pointofsale-pb/cashier"
-	"github.com/MamangRust/monolith-point-of-sale-shared/domain/requests"
+	"github.com/MamangRust/monolith-graphql-pointofsale-shared/domain/requests"
 	"google.golang.org/protobuf/types/known/emptypb"
 )
 
 // CreateCashier is the resolver for the createCashier field.
-func (r *mutationResolver) CreateCashier(ctx context.Context, input model1.CreateCashierRequest) (*model1.APIResponseCashier, error) {
+func (r *mutationResolver) CreateCashier(ctx context.Context, input model.CreateCashierRequest) (*model.APIResponseCashier, error) {
 	return ResolverHandle(r.ResolverHandle, "CreateCashier", ctx, func(ctx context.Context) (*model.APIResponseCashier, error) {
 		req := &requests.CreateCashierRequest{
 			Name:       input.Name,
@@ -50,7 +48,7 @@ func (r *mutationResolver) CreateCashier(ctx context.Context, input model1.Creat
 }
 
 // UpdateCashier is the resolver for the updateCashier field.
-func (r *mutationResolver) UpdateCashier(ctx context.Context, input model1.UpdateCashierRequest) (*model1.APIResponseCashier, error) {
+func (r *mutationResolver) UpdateCashier(ctx context.Context, input model.UpdateCashierRequest) (*model.APIResponseCashier, error) {
 	return ResolverHandle(r.ResolverHandle, "UpdateCashier", ctx, func(ctx context.Context) (*model.APIResponseCashier, error) {
 		id := int(input.CashierID)
 
@@ -87,7 +85,7 @@ func (r *mutationResolver) UpdateCashier(ctx context.Context, input model1.Updat
 }
 
 // TrashedCashier is the resolver for the trashedCashier field.
-func (r *mutationResolver) TrashedCashier(ctx context.Context, input model1.FindByIDCashierRequest) (*model1.APIResponseCashierDeleteAt, error) {
+func (r *mutationResolver) TrashedCashier(ctx context.Context, input model.FindByIDCashierRequest) (*model.APIResponseCashierDeleteAt, error) {
 	return ResolverHandle(r.ResolverHandle, "TrashedCashier", ctx, func(ctx context.Context) (*model.APIResponseCashierDeleteAt, error) {
 		id := int(input.ID)
 
@@ -113,7 +111,7 @@ func (r *mutationResolver) TrashedCashier(ctx context.Context, input model1.Find
 }
 
 // RestoreCashier is the resolver for the restoreCashier field.
-func (r *mutationResolver) RestoreCashier(ctx context.Context, input model1.FindByIDCashierRequest) (*model1.APIResponseCashierDeleteAt, error) {
+func (r *mutationResolver) RestoreCashier(ctx context.Context, input model.FindByIDCashierRequest) (*model.APIResponseCashierDeleteAt, error) {
 	return ResolverHandle(r.ResolverHandle, "RestoreCashier", ctx, func(ctx context.Context) (*model.APIResponseCashierDeleteAt, error) {
 		id := int(input.ID)
 
@@ -139,7 +137,7 @@ func (r *mutationResolver) RestoreCashier(ctx context.Context, input model1.Find
 }
 
 // DeleteCashierPermanent is the resolver for the deleteCashierPermanent field.
-func (r *mutationResolver) DeleteCashierPermanent(ctx context.Context, input model1.FindByIDCashierRequest) (*model1.APIResponseCashierDelete, error) {
+func (r *mutationResolver) DeleteCashierPermanent(ctx context.Context, input model.FindByIDCashierRequest) (*model.APIResponseCashierDelete, error) {
 	return ResolverHandle(r.ResolverHandle, "DeleteCashierPermanent", ctx, func(ctx context.Context) (*model.APIResponseCashierDelete, error) {
 		id := int(input.ID)
 
@@ -165,7 +163,7 @@ func (r *mutationResolver) DeleteCashierPermanent(ctx context.Context, input mod
 }
 
 // RestoreAllCashier is the resolver for the restoreAllCashier field.
-func (r *mutationResolver) RestoreAllCashier(ctx context.Context) (*model1.APIResponseCashierAll, error) {
+func (r *mutationResolver) RestoreAllCashier(ctx context.Context) (*model.APIResponseCashierAll, error) {
 	return ResolverHandle(r.ResolverHandle, "RestoreAllCashier", ctx, func(ctx context.Context) (*model.APIResponseCashierAll, error) {
 		res, err := r.CashierGraphql.CashierClient.RestoreAllCashier(ctx, &emptypb.Empty{})
 		if err != nil {
@@ -179,7 +177,7 @@ func (r *mutationResolver) RestoreAllCashier(ctx context.Context) (*model1.APIRe
 }
 
 // DeleteAllCashierPermanent is the resolver for the deleteAllCashierPermanent field.
-func (r *mutationResolver) DeleteAllCashierPermanent(ctx context.Context) (*model1.APIResponseCashierAll, error) {
+func (r *mutationResolver) DeleteAllCashierPermanent(ctx context.Context) (*model.APIResponseCashierAll, error) {
 	return ResolverHandle(r.ResolverHandle, "DeleteAllCashierPermanent", ctx, func(ctx context.Context) (*model.APIResponseCashierAll, error) {
 		res, err := r.CashierGraphql.CashierClient.DeleteAllCashierPermanent(ctx, &emptypb.Empty{})
 		if err != nil {
@@ -193,7 +191,7 @@ func (r *mutationResolver) DeleteAllCashierPermanent(ctx context.Context) (*mode
 }
 
 // FindMonthlyTotalSales is the resolver for the findMonthlyTotalSales field.
-func (r *queryResolver) FindMonthlyTotalSales(ctx context.Context, input model1.FindYearMonthTotalSales) (*model1.APIResponseCashierMonthlyTotalSales, error) {
+func (r *queryResolver) FindMonthlyTotalSales(ctx context.Context, input model.FindYearMonthTotalSales) (*model.APIResponseCashierMonthlyTotalSales, error) {
 	return ResolverHandle(r.ResolverHandle, "FindMonthlyTotalSales", ctx, func(ctx context.Context) (*model.APIResponseCashierMonthlyTotalSales, error) {
 		year := int(input.Year)
 		month := int(input.Month)
@@ -228,7 +226,7 @@ func (r *queryResolver) FindMonthlyTotalSales(ctx context.Context, input model1.
 }
 
 // FindYearlyTotalSales is the resolver for the findYearlyTotalSales field.
-func (r *queryResolver) FindYearlyTotalSales(ctx context.Context, input model1.FindYearTotalSales) (*model1.APIResponseCashierYearlyTotalSales, error) {
+func (r *queryResolver) FindYearlyTotalSales(ctx context.Context, input model.FindYearTotalSales) (*model.APIResponseCashierYearlyTotalSales, error) {
 	return ResolverHandle(r.ResolverHandle, "FindYearlyTotalSales", ctx, func(ctx context.Context) (*model.APIResponseCashierYearlyTotalSales, error) {
 		year := int(input.Year)
 
@@ -256,7 +254,7 @@ func (r *queryResolver) FindYearlyTotalSales(ctx context.Context, input model1.F
 }
 
 // FindMonthlyTotalSalesByID is the resolver for the findMonthlyTotalSalesById field.
-func (r *queryResolver) FindMonthlyTotalSalesByID(ctx context.Context, input model1.FindYearMonthTotalSalesByID) (*model1.APIResponseCashierMonthlyTotalSales, error) {
+func (r *queryResolver) FindMonthlyTotalSalesByID(ctx context.Context, input model.FindYearMonthTotalSalesByID) (*model.APIResponseCashierMonthlyTotalSales, error) {
 	return ResolverHandle(r.ResolverHandle, "FindMonthlyTotalSalesByID", ctx, func(ctx context.Context) (*model.APIResponseCashierMonthlyTotalSales, error) {
 		year := int(input.Year)
 		month := int(input.Month)
@@ -295,7 +293,7 @@ func (r *queryResolver) FindMonthlyTotalSalesByID(ctx context.Context, input mod
 }
 
 // FindYearlyTotalSalesByID is the resolver for the findYearlyTotalSalesById field.
-func (r *queryResolver) FindYearlyTotalSalesByID(ctx context.Context, input model1.FindYearTotalSalesByID) (*model1.APIResponseCashierYearlyTotalSales, error) {
+func (r *queryResolver) FindYearlyTotalSalesByID(ctx context.Context, input model.FindYearTotalSalesByID) (*model.APIResponseCashierYearlyTotalSales, error) {
 	return ResolverHandle(r.ResolverHandle, "FindYearlyTotalSalesByID", ctx, func(ctx context.Context) (*model.APIResponseCashierYearlyTotalSales, error) {
 		year := int(input.Year)
 		id := int(input.CashierID)
@@ -329,7 +327,7 @@ func (r *queryResolver) FindYearlyTotalSalesByID(ctx context.Context, input mode
 }
 
 // FindMonthlyTotalSalesByMerchant is the resolver for the findMonthlyTotalSalesByMerchant field.
-func (r *queryResolver) FindMonthlyTotalSalesByMerchant(ctx context.Context, input model1.FindYearMonthTotalSalesByMerchant) (*model1.APIResponseCashierMonthlyTotalSales, error) {
+func (r *queryResolver) FindMonthlyTotalSalesByMerchant(ctx context.Context, input model.FindYearMonthTotalSalesByMerchant) (*model.APIResponseCashierMonthlyTotalSales, error) {
 	return ResolverHandle(r.ResolverHandle, "FindMonthlyTotalSalesByMerchant", ctx, func(ctx context.Context) (*model.APIResponseCashierMonthlyTotalSales, error) {
 		year := int(input.Year)
 		month := int(input.Month)
@@ -368,7 +366,7 @@ func (r *queryResolver) FindMonthlyTotalSalesByMerchant(ctx context.Context, inp
 }
 
 // FindYearlyTotalSalesByMerchant is the resolver for the findYearlyTotalSalesByMerchant field.
-func (r *queryResolver) FindYearlyTotalSalesByMerchant(ctx context.Context, input model1.FindYearTotalSalesByMerchant) (*model1.APIResponseCashierYearlyTotalSales, error) {
+func (r *queryResolver) FindYearlyTotalSalesByMerchant(ctx context.Context, input model.FindYearTotalSalesByMerchant) (*model.APIResponseCashierYearlyTotalSales, error) {
 	return ResolverHandle(r.ResolverHandle, "FindYearlyTotalSalesByMerchant", ctx, func(ctx context.Context) (*model.APIResponseCashierYearlyTotalSales, error) {
 		year := int(input.Year)
 		merchantId := int(input.MerchantID)
@@ -402,7 +400,7 @@ func (r *queryResolver) FindYearlyTotalSalesByMerchant(ctx context.Context, inpu
 }
 
 // FindAllCashier is the resolver for the findAllCashier field.
-func (r *queryResolver) FindAllCashier(ctx context.Context, input *model1.FindAllCashierRequest) (*model1.APIResponsePaginationCashier, error) {
+func (r *queryResolver) FindAllCashier(ctx context.Context, input *model.FindAllCashierRequest) (*model.APIResponsePaginationCashier, error) {
 	return ResolverHandle(r.ResolverHandle, "FindAllCashier", ctx, func(ctx context.Context) (*model.APIResponsePaginationCashier, error) {
 		page := int32(*input.Page)
 		pageSize := int32(*input.PageSize)
@@ -423,7 +421,7 @@ func (r *queryResolver) FindAllCashier(ctx context.Context, input *model1.FindAl
 		}
 
 		req := &pb.FindAllCashierRequest{
-			Search:   *input.Search,
+			Search:   safeString(input.Search),
 			Page:     int32(page),
 			PageSize: int32(pageSize),
 		}
@@ -441,7 +439,7 @@ func (r *queryResolver) FindAllCashier(ctx context.Context, input *model1.FindAl
 }
 
 // FindByIDCashier is the resolver for the findByIdCashier field.
-func (r *queryResolver) FindByIDCashier(ctx context.Context, input model1.FindByIDCashierRequest) (*model1.APIResponseCashier, error) {
+func (r *queryResolver) FindByIDCashier(ctx context.Context, input model.FindByIDCashierRequest) (*model.APIResponseCashier, error) {
 	return ResolverHandle(r.ResolverHandle, "FindByIDCashier", ctx, func(ctx context.Context) (*model.APIResponseCashier, error) {
 		id := int(input.ID)
 
@@ -469,7 +467,7 @@ func (r *queryResolver) FindByIDCashier(ctx context.Context, input model1.FindBy
 }
 
 // FindMonthSales is the resolver for the findMonthSales field.
-func (r *queryResolver) FindMonthSales(ctx context.Context, input model1.FindYearCashier) (*model1.APIResponseCashierMonthSales, error) {
+func (r *queryResolver) FindMonthSales(ctx context.Context, input model.FindYearCashier) (*model.APIResponseCashierMonthSales, error) {
 	return ResolverHandle(r.ResolverHandle, "FindMonthSales", ctx, func(ctx context.Context) (*model.APIResponseCashierMonthSales, error) {
 		year := int(input.Year)
 
@@ -497,7 +495,7 @@ func (r *queryResolver) FindMonthSales(ctx context.Context, input model1.FindYea
 }
 
 // FindYearSales is the resolver for the findYearSales field.
-func (r *queryResolver) FindYearSales(ctx context.Context, input model1.FindYearCashier) (*model1.APIResponseCashierYearSales, error) {
+func (r *queryResolver) FindYearSales(ctx context.Context, input model.FindYearCashier) (*model.APIResponseCashierYearSales, error) {
 	return ResolverHandle(r.ResolverHandle, "FindYearSales", ctx, func(ctx context.Context) (*model.APIResponseCashierYearSales, error) {
 		year := int(input.Year)
 
@@ -523,7 +521,7 @@ func (r *queryResolver) FindYearSales(ctx context.Context, input model1.FindYear
 }
 
 // FindMonthSalesByMerchant is the resolver for the findMonthSalesByMerchant field.
-func (r *queryResolver) FindMonthSalesByMerchant(ctx context.Context, input model1.FindYearCashierByMerchant) (*model1.APIResponseCashierMonthSales, error) {
+func (r *queryResolver) FindMonthSalesByMerchant(ctx context.Context, input model.FindYearCashierByMerchant) (*model.APIResponseCashierMonthSales, error) {
 	return ResolverHandle(r.ResolverHandle, "FindMonthSalesByMerchant", ctx, func(ctx context.Context) (*model.APIResponseCashierMonthSales, error) {
 		if input.Year <= 0 {
 			return nil, errors.NewBadRequestError("year is required")
@@ -554,7 +552,7 @@ func (r *queryResolver) FindMonthSalesByMerchant(ctx context.Context, input mode
 }
 
 // FindYearSalesByMerchant is the resolver for the findYearSalesByMerchant field.
-func (r *queryResolver) FindYearSalesByMerchant(ctx context.Context, input model1.FindYearCashierByMerchant) (*model1.APIResponseCashierYearSales, error) {
+func (r *queryResolver) FindYearSalesByMerchant(ctx context.Context, input model.FindYearCashierByMerchant) (*model.APIResponseCashierYearSales, error) {
 	return ResolverHandle(r.ResolverHandle, "FindYearSalesByMerchant", ctx, func(ctx context.Context) (*model.APIResponseCashierYearSales, error) {
 		if input.Year <= 0 {
 			return nil, errors.NewBadRequestError("year is required")
@@ -585,7 +583,7 @@ func (r *queryResolver) FindYearSalesByMerchant(ctx context.Context, input model
 }
 
 // FindMonthSalesByID is the resolver for the findMonthSalesById field.
-func (r *queryResolver) FindMonthSalesByID(ctx context.Context, input model1.FindYearCashierByID) (*model1.APIResponseCashierMonthSales, error) {
+func (r *queryResolver) FindMonthSalesByID(ctx context.Context, input model.FindYearCashierByID) (*model.APIResponseCashierMonthSales, error) {
 	return ResolverHandle(r.ResolverHandle, "FindMonthSalesByID", ctx, func(ctx context.Context) (*model.APIResponseCashierMonthSales, error) {
 		if input.Year <= 0 {
 			return nil, errors.NewBadRequestError("year is required")
@@ -616,7 +614,7 @@ func (r *queryResolver) FindMonthSalesByID(ctx context.Context, input model1.Fin
 }
 
 // FindYearSalesByID is the resolver for the findYearSalesById field.
-func (r *queryResolver) FindYearSalesByID(ctx context.Context, input model1.FindYearCashierByID) (*model1.APIResponseCashierYearSales, error) {
+func (r *queryResolver) FindYearSalesByID(ctx context.Context, input model.FindYearCashierByID) (*model.APIResponseCashierYearSales, error) {
 	return ResolverHandle(r.ResolverHandle, "FindYearSalesByID", ctx, func(ctx context.Context) (*model.APIResponseCashierYearSales, error) {
 		if input.Year <= 0 {
 			return nil, errors.NewBadRequestError("year is required")
@@ -647,7 +645,7 @@ func (r *queryResolver) FindYearSalesByID(ctx context.Context, input model1.Find
 }
 
 // FindByActiveCashier is the resolver for the findByActiveCashier field.
-func (r *queryResolver) FindByActiveCashier(ctx context.Context, input *model1.FindAllCashierRequest) (*model1.APIResponsePaginationCashierDeleteAt, error) {
+func (r *queryResolver) FindByActiveCashier(ctx context.Context, input *model.FindAllCashierRequest) (*model.APIResponsePaginationCashierDeleteAt, error) {
 	return ResolverHandle(r.ResolverHandle, "FindByActiveCashier", ctx, func(ctx context.Context) (*model.APIResponsePaginationCashierDeleteAt, error) {
 		// Normalize defaults
 		page := int32(*input.Page)
@@ -670,7 +668,7 @@ func (r *queryResolver) FindByActiveCashier(ctx context.Context, input *model1.F
 		}
 
 		req := &pb.FindAllCashierRequest{
-			Search:   *input.Search,
+			Search:   safeString(input.Search),
 			Page:     int32(page),
 			PageSize: int32(pageSize),
 		}
@@ -688,7 +686,7 @@ func (r *queryResolver) FindByActiveCashier(ctx context.Context, input *model1.F
 }
 
 // FindByTrashedCashier is the resolver for the findByTrashedCashier field.
-func (r *queryResolver) FindByTrashedCashier(ctx context.Context, input *model1.FindAllCashierRequest) (*model1.APIResponsePaginationCashierDeleteAt, error) {
+func (r *queryResolver) FindByTrashedCashier(ctx context.Context, input *model.FindAllCashierRequest) (*model.APIResponsePaginationCashierDeleteAt, error) {
 	return ResolverHandle(r.ResolverHandle, "FindByTrashedCashier", ctx, func(ctx context.Context) (*model.APIResponsePaginationCashierDeleteAt, error) {
 		page := int32(*input.Page)
 		pageSize := int32(*input.PageSize)
@@ -710,7 +708,7 @@ func (r *queryResolver) FindByTrashedCashier(ctx context.Context, input *model1.
 		}
 
 		req := &pb.FindAllCashierRequest{
-			Search:   *input.Search,
+			Search:   safeString(input.Search),
 			Page:     int32(page),
 			PageSize: int32(pageSize),
 		}
@@ -728,7 +726,7 @@ func (r *queryResolver) FindByTrashedCashier(ctx context.Context, input *model1.
 }
 
 // FindByMerchantCashier is the resolver for the findByMerchantCashier field.
-func (r *queryResolver) FindByMerchantCashier(ctx context.Context, input *model1.FindByMerchantCashierRequest) (*model1.APIResponsePaginationCashier, error) {
+func (r *queryResolver) FindByMerchantCashier(ctx context.Context, input *model.FindByMerchantCashierRequest) (*model.APIResponsePaginationCashier, error) {
 	return ResolverHandle(r.ResolverHandle, "FindByMerchantCashier", ctx, func(ctx context.Context) (*model.APIResponsePaginationCashier, error) {
 		page := int32(*input.Page)
 		pageSize := int32(*input.PageSize)
@@ -751,7 +749,7 @@ func (r *queryResolver) FindByMerchantCashier(ctx context.Context, input *model1
 		}
 
 		req := &pb.FindByMerchantCashierRequest{
-			Search:     *input.Search,
+			Search:     safeString(input.Search),
 			Page:       int32(page),
 			MerchantId: int32(input.MerchantID),
 			PageSize:   int32(pageSize),

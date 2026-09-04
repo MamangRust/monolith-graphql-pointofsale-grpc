@@ -6,18 +6,16 @@ package graph
 
 import (
 	"context"
-
-	"github.com/MamangRust/monolith-point-of-sale-shared/errors"
+	errors "github.com/MamangRust/monolith-graphql-pointofsale-shared/errors"
 
 	"github.com/MamangRust/monolith-graphql-pointofsale-apigateway/internal/model"
-	model1 "github.com/MamangRust/monolith-graphql-pointofsale-apigateway/internal/model"
 	pb "github.com/MamangRust/monolith-graphql-pointofsale-pb/category"
-	"github.com/MamangRust/monolith-point-of-sale-shared/domain/requests"
+	"github.com/MamangRust/monolith-graphql-pointofsale-shared/domain/requests"
 	"google.golang.org/protobuf/types/known/emptypb"
 )
 
 // CreateCategory is the resolver for the createCategory field.
-func (r *mutationResolver) CreateCategory(ctx context.Context, input model1.CreateCategoryRequest) (*model1.APIResponseCategory, error) {
+func (r *mutationResolver) CreateCategory(ctx context.Context, input model.CreateCategoryRequest) (*model.APIResponseCategory, error) {
 	return ResolverHandle(r.ResolverHandle, "CreateCategory", ctx, func(ctx context.Context) (*model.APIResponseCategory, error) {
 		req := &requests.CreateCategoryRequest{
 			Name:        input.Name,
@@ -48,7 +46,7 @@ func (r *mutationResolver) CreateCategory(ctx context.Context, input model1.Crea
 }
 
 // UpdateCategory is the resolver for the updateCategory field.
-func (r *mutationResolver) UpdateCategory(ctx context.Context, input model1.UpdateCategoryRequest) (*model1.APIResponseCategory, error) {
+func (r *mutationResolver) UpdateCategory(ctx context.Context, input model.UpdateCategoryRequest) (*model.APIResponseCategory, error) {
 	return ResolverHandle(r.ResolverHandle, "UpdateCategory", ctx, func(ctx context.Context) (*model.APIResponseCategory, error) {
 		id := int(input.CategoryID)
 
@@ -87,7 +85,7 @@ func (r *mutationResolver) UpdateCategory(ctx context.Context, input model1.Upda
 }
 
 // TrashedCategory is the resolver for the trashedCategory field.
-func (r *mutationResolver) TrashedCategory(ctx context.Context, input model1.FindByIDCategoryRequest) (*model1.APIResponseCategoryDeleteAt, error) {
+func (r *mutationResolver) TrashedCategory(ctx context.Context, input model.FindByIDCategoryRequest) (*model.APIResponseCategoryDeleteAt, error) {
 	return ResolverHandle(r.ResolverHandle, "TrashedCategory", ctx, func(ctx context.Context) (*model.APIResponseCategoryDeleteAt, error) {
 		id := int(input.ID)
 
@@ -113,7 +111,7 @@ func (r *mutationResolver) TrashedCategory(ctx context.Context, input model1.Fin
 }
 
 // RestoreCategory is the resolver for the restoreCategory field.
-func (r *mutationResolver) RestoreCategory(ctx context.Context, input model1.FindByIDCategoryRequest) (*model1.APIResponseCategoryDeleteAt, error) {
+func (r *mutationResolver) RestoreCategory(ctx context.Context, input model.FindByIDCategoryRequest) (*model.APIResponseCategoryDeleteAt, error) {
 	return ResolverHandle(r.ResolverHandle, "RestoreCategory", ctx, func(ctx context.Context) (*model.APIResponseCategoryDeleteAt, error) {
 		id := int(input.ID)
 
@@ -139,7 +137,7 @@ func (r *mutationResolver) RestoreCategory(ctx context.Context, input model1.Fin
 }
 
 // DeleteCategoryPermanent is the resolver for the deleteCategoryPermanent field.
-func (r *mutationResolver) DeleteCategoryPermanent(ctx context.Context, input model1.FindByIDCategoryRequest) (*model1.APIResponseCategoryDelete, error) {
+func (r *mutationResolver) DeleteCategoryPermanent(ctx context.Context, input model.FindByIDCategoryRequest) (*model.APIResponseCategoryDelete, error) {
 	return ResolverHandle(r.ResolverHandle, "DeleteCategoryPermanent", ctx, func(ctx context.Context) (*model.APIResponseCategoryDelete, error) {
 		id := int(input.ID)
 
@@ -165,7 +163,7 @@ func (r *mutationResolver) DeleteCategoryPermanent(ctx context.Context, input mo
 }
 
 // RestoreAllCategory is the resolver for the restoreAllCategory field.
-func (r *mutationResolver) RestoreAllCategory(ctx context.Context) (*model1.APIResponseCategoryAll, error) {
+func (r *mutationResolver) RestoreAllCategory(ctx context.Context) (*model.APIResponseCategoryAll, error) {
 	return ResolverHandle(r.ResolverHandle, "RestoreAllCategory", ctx, func(ctx context.Context) (*model.APIResponseCategoryAll, error) {
 		res, err := r.CategoryGraphql.CategoryClient.RestoreAllCategory(ctx, &emptypb.Empty{})
 		if err != nil {
@@ -179,7 +177,7 @@ func (r *mutationResolver) RestoreAllCategory(ctx context.Context) (*model1.APIR
 }
 
 // DeleteAllCategoryPermanent is the resolver for the deleteAllCategoryPermanent field.
-func (r *mutationResolver) DeleteAllCategoryPermanent(ctx context.Context) (*model1.APIResponseCategoryAll, error) {
+func (r *mutationResolver) DeleteAllCategoryPermanent(ctx context.Context) (*model.APIResponseCategoryAll, error) {
 	return ResolverHandle(r.ResolverHandle, "DeleteAllCategoryPermanent", ctx, func(ctx context.Context) (*model.APIResponseCategoryAll, error) {
 		res, err := r.CategoryGraphql.CategoryClient.DeleteAllCategoryPermanent(ctx, &emptypb.Empty{})
 		if err != nil {
@@ -193,7 +191,7 @@ func (r *mutationResolver) DeleteAllCategoryPermanent(ctx context.Context) (*mod
 }
 
 // FindMonthlyTotalPrices is the resolver for the findMonthlyTotalPrices field.
-func (r *queryResolver) FindMonthlyTotalPrices(ctx context.Context, input model1.FindYearMonthTotalPrices) (*model1.APIResponseCategoryMonthlyTotalPrice, error) {
+func (r *queryResolver) FindMonthlyTotalPrices(ctx context.Context, input model.FindYearMonthTotalPrices) (*model.APIResponseCategoryMonthlyTotalPrice, error) {
 	return ResolverHandle(r.ResolverHandle, "FindMonthlyTotalPrices", ctx, func(ctx context.Context) (*model.APIResponseCategoryMonthlyTotalPrice, error) {
 		year := int(input.Year)
 		month := int(input.Month)
@@ -227,7 +225,7 @@ func (r *queryResolver) FindMonthlyTotalPrices(ctx context.Context, input model1
 }
 
 // FindYearlyTotalPrices is the resolver for the findYearlyTotalPrices field.
-func (r *queryResolver) FindYearlyTotalPrices(ctx context.Context, input model1.FindYearTotalPrices) (*model1.APIResponseCategoryYearlyTotalPrice, error) {
+func (r *queryResolver) FindYearlyTotalPrices(ctx context.Context, input model.FindYearTotalPrices) (*model.APIResponseCategoryYearlyTotalPrice, error) {
 	return ResolverHandle(r.ResolverHandle, "FindYearlyTotalPrices", ctx, func(ctx context.Context) (*model.APIResponseCategoryYearlyTotalPrice, error) {
 		year := int(input.Year)
 
@@ -255,7 +253,7 @@ func (r *queryResolver) FindYearlyTotalPrices(ctx context.Context, input model1.
 }
 
 // FindMonthlyTotalPricesByID is the resolver for the findMonthlyTotalPricesById field.
-func (r *queryResolver) FindMonthlyTotalPricesByID(ctx context.Context, input model1.FindYearMonthTotalPriceByID) (*model1.APIResponseCategoryMonthlyTotalPrice, error) {
+func (r *queryResolver) FindMonthlyTotalPricesByID(ctx context.Context, input model.FindYearMonthTotalPriceByID) (*model.APIResponseCategoryMonthlyTotalPrice, error) {
 	return ResolverHandle(r.ResolverHandle, "FindMonthlyTotalPricesByID", ctx, func(ctx context.Context) (*model.APIResponseCategoryMonthlyTotalPrice, error) {
 		year := int(input.Year)
 		month := int(input.Month)
@@ -294,7 +292,7 @@ func (r *queryResolver) FindMonthlyTotalPricesByID(ctx context.Context, input mo
 }
 
 // FindYearlyTotalPricesByID is the resolver for the findYearlyTotalPricesById field.
-func (r *queryResolver) FindYearlyTotalPricesByID(ctx context.Context, input model1.FindYearTotalPriceByID) (*model1.APIResponseCategoryYearlyTotalPrice, error) {
+func (r *queryResolver) FindYearlyTotalPricesByID(ctx context.Context, input model.FindYearTotalPriceByID) (*model.APIResponseCategoryYearlyTotalPrice, error) {
 	return ResolverHandle(r.ResolverHandle, "FindYearlyTotalPricesByID", ctx, func(ctx context.Context) (*model.APIResponseCategoryYearlyTotalPrice, error) {
 		year := int(input.Year)
 		id := int(input.CategoryID)
@@ -328,7 +326,7 @@ func (r *queryResolver) FindYearlyTotalPricesByID(ctx context.Context, input mod
 }
 
 // FindMonthlyTotalPricesByMerchant is the resolver for the findMonthlyTotalPricesByMerchant field.
-func (r *queryResolver) FindMonthlyTotalPricesByMerchant(ctx context.Context, input model1.FindYearMonthTotalPriceByMerchant) (*model1.APIResponseCategoryMonthlyTotalPrice, error) {
+func (r *queryResolver) FindMonthlyTotalPricesByMerchant(ctx context.Context, input model.FindYearMonthTotalPriceByMerchant) (*model.APIResponseCategoryMonthlyTotalPrice, error) {
 	return ResolverHandle(r.ResolverHandle, "FindMonthlyTotalPricesByMerchant", ctx, func(ctx context.Context) (*model.APIResponseCategoryMonthlyTotalPrice, error) {
 		year := int(input.Year)
 		month := int(input.Month)
@@ -367,7 +365,7 @@ func (r *queryResolver) FindMonthlyTotalPricesByMerchant(ctx context.Context, in
 }
 
 // FindYearlyTotalPricesByMerchant is the resolver for the findYearlyTotalPricesByMerchant field.
-func (r *queryResolver) FindYearlyTotalPricesByMerchant(ctx context.Context, input model1.FindYearTotalPriceByMerchant) (*model1.APIResponseCategoryYearlyTotalPrice, error) {
+func (r *queryResolver) FindYearlyTotalPricesByMerchant(ctx context.Context, input model.FindYearTotalPriceByMerchant) (*model.APIResponseCategoryYearlyTotalPrice, error) {
 	return ResolverHandle(r.ResolverHandle, "FindYearlyTotalPricesByMerchant", ctx, func(ctx context.Context) (*model.APIResponseCategoryYearlyTotalPrice, error) {
 		year := int(input.Year)
 		id := int(input.MerchantID)
@@ -401,7 +399,7 @@ func (r *queryResolver) FindYearlyTotalPricesByMerchant(ctx context.Context, inp
 }
 
 // FindMonthPrice is the resolver for the findMonthPrice field.
-func (r *queryResolver) FindMonthPrice(ctx context.Context, input model1.FindYearCategory) (*model1.APIResponseCategoryMonthPrice, error) {
+func (r *queryResolver) FindMonthPrice(ctx context.Context, input model.FindYearCategory) (*model.APIResponseCategoryMonthPrice, error) {
 	return ResolverHandle(r.ResolverHandle, "FindMonthPrice", ctx, func(ctx context.Context) (*model.APIResponseCategoryMonthPrice, error) {
 		year := int(input.Year)
 
@@ -429,7 +427,7 @@ func (r *queryResolver) FindMonthPrice(ctx context.Context, input model1.FindYea
 }
 
 // FindYearPrice is the resolver for the findYearPrice field.
-func (r *queryResolver) FindYearPrice(ctx context.Context, input model1.FindYearCategory) (*model1.APIResponseCategoryYearPrice, error) {
+func (r *queryResolver) FindYearPrice(ctx context.Context, input model.FindYearCategory) (*model.APIResponseCategoryYearPrice, error) {
 	return ResolverHandle(r.ResolverHandle, "FindYearPrice", ctx, func(ctx context.Context) (*model.APIResponseCategoryYearPrice, error) {
 		year := int(input.Year)
 
@@ -457,7 +455,7 @@ func (r *queryResolver) FindYearPrice(ctx context.Context, input model1.FindYear
 }
 
 // FindMonthPriceByMerchant is the resolver for the findMonthPriceByMerchant field.
-func (r *queryResolver) FindMonthPriceByMerchant(ctx context.Context, input model1.FindYearCategoryByMerchant) (*model1.APIResponseCategoryMonthPrice, error) {
+func (r *queryResolver) FindMonthPriceByMerchant(ctx context.Context, input model.FindYearCategoryByMerchant) (*model.APIResponseCategoryMonthPrice, error) {
 	return ResolverHandle(r.ResolverHandle, "FindMonthPriceByMerchant", ctx, func(ctx context.Context) (*model.APIResponseCategoryMonthPrice, error) {
 		year := int(input.Year)
 		id := int(input.MerchantID)
@@ -491,7 +489,7 @@ func (r *queryResolver) FindMonthPriceByMerchant(ctx context.Context, input mode
 }
 
 // FindYearPriceByMerchant is the resolver for the findYearPriceByMerchant field.
-func (r *queryResolver) FindYearPriceByMerchant(ctx context.Context, input model1.FindYearCategoryByMerchant) (*model1.APIResponseCategoryYearPrice, error) {
+func (r *queryResolver) FindYearPriceByMerchant(ctx context.Context, input model.FindYearCategoryByMerchant) (*model.APIResponseCategoryYearPrice, error) {
 	return ResolverHandle(r.ResolverHandle, "FindYearPriceByMerchant", ctx, func(ctx context.Context) (*model.APIResponseCategoryYearPrice, error) {
 		year := int(input.Year)
 		id := int(input.MerchantID)
@@ -525,7 +523,7 @@ func (r *queryResolver) FindYearPriceByMerchant(ctx context.Context, input model
 }
 
 // FindMonthPriceByID is the resolver for the findMonthPriceById field.
-func (r *queryResolver) FindMonthPriceByID(ctx context.Context, input model1.FindYearCategoryByID) (*model1.APIResponseCategoryMonthPrice, error) {
+func (r *queryResolver) FindMonthPriceByID(ctx context.Context, input model.FindYearCategoryByID) (*model.APIResponseCategoryMonthPrice, error) {
 	return ResolverHandle(r.ResolverHandle, "FindMonthPriceByID", ctx, func(ctx context.Context) (*model.APIResponseCategoryMonthPrice, error) {
 		year := int(input.Year)
 		id := int(input.CategoryID)
@@ -559,7 +557,7 @@ func (r *queryResolver) FindMonthPriceByID(ctx context.Context, input model1.Fin
 }
 
 // FindYearPriceByID is the resolver for the findYearPriceById field.
-func (r *queryResolver) FindYearPriceByID(ctx context.Context, input model1.FindYearCategoryByID) (*model1.APIResponseCategoryYearPrice, error) {
+func (r *queryResolver) FindYearPriceByID(ctx context.Context, input model.FindYearCategoryByID) (*model.APIResponseCategoryYearPrice, error) {
 	return ResolverHandle(r.ResolverHandle, "FindYearPriceByID", ctx, func(ctx context.Context) (*model.APIResponseCategoryYearPrice, error) {
 		year := int(input.Year)
 		id := int(input.CategoryID)
@@ -593,7 +591,7 @@ func (r *queryResolver) FindYearPriceByID(ctx context.Context, input model1.Find
 }
 
 // FindByActiveCategory is the resolver for the findByActiveCategory field.
-func (r *queryResolver) FindByActiveCategory(ctx context.Context, input *model1.FindAllCategoryRequest) (*model1.APIResponsePaginationCategoryDeleteAt, error) {
+func (r *queryResolver) FindByActiveCategory(ctx context.Context, input *model.FindAllCategoryRequest) (*model.APIResponsePaginationCategoryDeleteAt, error) {
 	return ResolverHandle(r.ResolverHandle, "FindByActiveCategory", ctx, func(ctx context.Context) (*model.APIResponsePaginationCategoryDeleteAt, error) {
 		page := int32(*input.Page)
 		pageSize := int32(*input.PageSize)
@@ -614,10 +612,15 @@ func (r *queryResolver) FindByActiveCategory(ctx context.Context, input *model1.
 			return cached, nil
 		}
 
+		var search string
+		if input != nil && input.Search != nil {
+			search = safeString(input.Search)
+		}
+
 		req := &pb.FindAllCategoryRequest{
 			Page:     int32(page),
 			PageSize: int32(pageSize),
-			Search:   *input.Search,
+			Search:   search,
 		}
 		categories, err := r.CategoryGraphql.CategoryClient.FindByActive(ctx, req)
 		if err != nil {
@@ -633,7 +636,7 @@ func (r *queryResolver) FindByActiveCategory(ctx context.Context, input *model1.
 }
 
 // FindByTrashedCategory is the resolver for the findByTrashedCategory field.
-func (r *queryResolver) FindByTrashedCategory(ctx context.Context, input *model1.FindAllCategoryRequest) (*model1.APIResponsePaginationCategoryDeleteAt, error) {
+func (r *queryResolver) FindByTrashedCategory(ctx context.Context, input *model.FindAllCategoryRequest) (*model.APIResponsePaginationCategoryDeleteAt, error) {
 	return ResolverHandle(r.ResolverHandle, "FindByTrashedCategory", ctx, func(ctx context.Context) (*model.APIResponsePaginationCategoryDeleteAt, error) {
 		page := int32(*input.Page)
 		pageSize := int32(*input.PageSize)
@@ -654,10 +657,15 @@ func (r *queryResolver) FindByTrashedCategory(ctx context.Context, input *model1
 			return cached, nil
 		}
 
+		var search string
+		if input != nil && input.Search != nil {
+			search = safeString(input.Search)
+		}
+
 		req := &pb.FindAllCategoryRequest{
 			Page:     int32(page),
 			PageSize: int32(pageSize),
-			Search:   *input.Search,
+			Search:   search,
 		}
 		categories, err := r.CategoryGraphql.CategoryClient.FindByTrashed(ctx, req)
 		if err != nil {
@@ -673,7 +681,7 @@ func (r *queryResolver) FindByTrashedCategory(ctx context.Context, input *model1
 }
 
 // FindAllCategory is the resolver for the findAllCategory field.
-func (r *queryResolver) FindAllCategory(ctx context.Context, input *model1.FindAllCategoryRequest) (*model1.APIResponsePaginationCategory, error) {
+func (r *queryResolver) FindAllCategory(ctx context.Context, input *model.FindAllCategoryRequest) (*model.APIResponsePaginationCategory, error) {
 	return ResolverHandle(r.ResolverHandle, "FindAllCategory", ctx, func(ctx context.Context) (*model.APIResponsePaginationCategory, error) {
 		page := int32(*input.Page)
 		pageSize := int32(*input.PageSize)
@@ -694,10 +702,15 @@ func (r *queryResolver) FindAllCategory(ctx context.Context, input *model1.FindA
 			return cached, nil
 		}
 
+		var search string
+		if input != nil && input.Search != nil {
+			search = safeString(input.Search)
+		}
+
 		req := &pb.FindAllCategoryRequest{
 			Page:     int32(page),
 			PageSize: int32(pageSize),
-			Search:   *input.Search,
+			Search:   search,
 		}
 		categories, err := r.CategoryGraphql.CategoryClient.FindAll(ctx, req)
 		if err != nil {
@@ -713,7 +726,7 @@ func (r *queryResolver) FindAllCategory(ctx context.Context, input *model1.FindA
 }
 
 // FindByIDCategory is the resolver for the findByIdCategory field.
-func (r *queryResolver) FindByIDCategory(ctx context.Context, input model1.FindByIDCategoryRequest) (*model1.APIResponseCategory, error) {
+func (r *queryResolver) FindByIDCategory(ctx context.Context, input model.FindByIDCategoryRequest) (*model.APIResponseCategory, error) {
 	return ResolverHandle(r.ResolverHandle, "FindByIDCategory", ctx, func(ctx context.Context) (*model.APIResponseCategory, error) {
 		id := int(input.ID)
 

@@ -4,7 +4,7 @@ import (
 	"context"
 	"runtime/debug"
 
-	"github.com/MamangRust/monolith-point-of-sale-pkg/logger"
+	"github.com/MamangRust/monolith-graphql-pointofsale-pkg/logger"
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"

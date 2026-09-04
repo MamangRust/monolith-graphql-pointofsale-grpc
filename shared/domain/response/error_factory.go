@@ -1,12 +1,12 @@
 package response
 
 import (
-	pb "github.com/MamangRust/monolith-graphql-pointofsale-pb/api"
-	"github.com/MamangRust/monolith-point-of-sale-shared/errors"
-
+	"github.com/MamangRust/monolith-graphql-pointofsale-shared/errors"
 	"github.com/labstack/echo/v4"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
+
+	pbcommon "github.com/MamangRust/monolith-graphql-pointofsale-pb/common"
 )
 
 func NewErrorResponse(message string, code int) *ErrorResponse {
@@ -30,7 +30,7 @@ func ToGrpcErrorFromErrorResponse(err *ErrorResponse) error {
 		return nil
 	}
 	return status.Errorf(codes.Code(err.Code),
-		errors.GrpcErrorToJson(&pb.ErrorResponse{
+		errors.GrpcErrorToJson(&pbcommon.ErrorResponse{
 			Status:  err.Status,
 			Message: err.Message,
 			Code:    int32(err.Code),
@@ -40,7 +40,7 @@ func ToGrpcErrorFromErrorResponse(err *ErrorResponse) error {
 
 func NewGrpcError(statusText string, message string, code int) error {
 	return status.Errorf(codes.Code(code),
-		errors.GrpcErrorToJson(&pb.ErrorResponse{
+		errors.GrpcErrorToJson(&pbcommon.ErrorResponse{
 			Status:  statusText,
 			Message: message,
 			Code:    int32(code),

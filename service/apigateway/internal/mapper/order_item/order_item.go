@@ -3,7 +3,7 @@ package orderitemgraphqlmapper
 import (
 	graphqlmapper "github.com/MamangRust/monolith-graphql-pointofsale-apigateway/internal/mapper"
 	"github.com/MamangRust/monolith-graphql-pointofsale-apigateway/internal/model"
-	pb "github.com/MamangRust/monolith-graphql-pointofsale-pb/order_item"
+	pb "github.com/MamangRust/monolith-graphql-pointofsale-pb"
 )
 
 type orderItemGraphqlMapper struct {

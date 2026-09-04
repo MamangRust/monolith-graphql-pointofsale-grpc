@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/MamangRust/monolith-point-of-sale-shared/cache"
+	"github.com/MamangRust/monolith-graphql-pointofsale-shared/cache"
 )
 
 type merchantCommandCache struct {

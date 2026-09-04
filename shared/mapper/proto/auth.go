@@ -1,9 +1,10 @@
 package protomapper
 
 import (
-	pb "github.com/MamangRust/monolith-graphql-pointofsale-pb/auth"
+	"github.com/MamangRust/monolith-graphql-pointofsale-shared/domain/response"
+
+	pb "github.com/MamangRust/monolith-graphql-pointofsale-pb"
 	pbuser "github.com/MamangRust/monolith-graphql-pointofsale-pb/user"
-	"github.com/MamangRust/monolith-point-of-sale-shared/domain/response"
 )
 
 type authProtoMapper struct {

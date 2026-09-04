@@ -3,7 +3,7 @@ syntax = "proto3";
 package pb;
 
 import "google/protobuf/wrappers.proto";
-import "api.proto";
+import "common/api.proto";
 
 option go_package = "github.com/MamangRust/monolith-graphql-pointofsale-pb";
 
@@ -65,14 +65,14 @@ message ApiResponsePaginationOrderItemDeleteAt {
     string status = 1;
     string message = 2;
     repeated OrderItemResponseDeleteAt data = 3;
-    PaginationMeta pagination = 4;
+    pb.common.PaginationMeta pagination = 4;
 }
 
 message ApiResponsePaginationOrderItem {
     string status = 1;
     string message = 2;
     repeated OrderItemResponse data = 3;
-    PaginationMeta pagination = 4;
+    pb.common.PaginationMeta pagination = 4;
 }
 
 

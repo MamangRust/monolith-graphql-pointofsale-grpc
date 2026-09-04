@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/MamangRust/monolith-point-of-sale-pkg/logger"
+	"github.com/MamangRust/monolith-graphql-pointofsale-pkg/logger"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/codes"

@@ -1,12 +1,11 @@
-module github.com/MamangRust/monolith-point-of-sale-shared
+module github.com/MamangRust/monolith-graphql-pointofsale-shared
 
 go 1.23.4
 
 require (
-	github.com/MamangRust/monolith-point-of-sale-pkg v1.0.5
+	github.com/MamangRust/monolith-graphql-pointofsale-pkg v1.0.5
 	github.com/go-playground/validator/v10 v10.26.0
 	github.com/labstack/echo/v4 v4.13.4
-	github.com/MamangRust/monolith-graphql-pointofsale-pb v1.0.0
 	google.golang.org/grpc v1.72.1
 	google.golang.org/protobuf v1.36.6
 )
@@ -29,3 +28,7 @@ require (
 )
 
 replace github.com/MamangRust/monolith-graphql-pointofsale-pb => ../pb
+
+replace github.com/MamangRust/monolith-graphql-pointofsale-pkg => ../pkg
+
+replace github.com/MamangRust/monolith-graphql-pointofsale-shared => ../shared

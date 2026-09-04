@@ -1,9 +1,9 @@
-module github.com/MamangRust/monolith-point-of-sale-migrate
+module github.com/MamangRust/monolith-graphql-pointofsale-migrate
 
 go 1.24.0
 
 require (
-	github.com/MamangRust/monolith-point-of-sale-pkg v1.0.2
+	github.com/MamangRust/monolith-graphql-pointofsale-pkg v1.0.2
 	github.com/jackc/pgx/v5 v5.7.5
 	github.com/pressly/goose/v3 v3.24.3
 	github.com/spf13/viper v1.20.1
@@ -33,6 +33,8 @@ require (
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
 
-replace github.com/MamangRust/monolith-point-of-sale-pkg => ../../pkg
-
-replace github.com/MamangRust/monolith-point-of-sale-shared => ../../shared
+replace (
+	github.com/MamangRust/monolith-graphql-pointofsale-pb => ../../pb
+	github.com/MamangRust/monolith-graphql-pointofsale-pkg => ../../pkg
+	github.com/MamangRust/monolith-graphql-pointofsale-shared => ../../shared
+)

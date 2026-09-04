@@ -6,13 +6,12 @@ package graph
 
 import (
 	"context"
-
-	"github.com/MamangRust/monolith-point-of-sale-shared/errors"
 	"fmt"
+	errors "github.com/MamangRust/monolith-graphql-pointofsale-shared/errors"
 
 	"github.com/MamangRust/monolith-graphql-pointofsale-apigateway/internal/model"
 	pb "github.com/MamangRust/monolith-graphql-pointofsale-pb/user"
-	"github.com/MamangRust/monolith-point-of-sale-shared/domain/requests"
+	"github.com/MamangRust/monolith-graphql-pointofsale-shared/domain/requests"
 	"google.golang.org/protobuf/types/known/emptypb"
 )
 
@@ -202,7 +201,33 @@ func (r *mutationResolver) DeleteAllUserPermanent(ctx context.Context) (*model.A
 
 // FindAllUsers is the resolver for the findAllUsers field.
 func (r *queryResolver) FindAllUsers(ctx context.Context, input *model.FindAllUserInput) (*model.APIResponsePaginationUser, error) {
-	panic(fmt.Errorf("not implemented: FindAllUsers - findAllUsers"))
+	return ResolverHandle(r.ResolverHandle, "FindAllUsers", ctx, func(ctx context.Context) (*model.APIResponsePaginationUser, error) {
+		var page, pageSize int32
+		var search string
+		if input != nil {
+			if input.Page != nil {
+				page = int32(*input.Page)
+			}
+			if input.PageSize != nil {
+				pageSize = int32(*input.PageSize)
+			}
+			if input.Search != nil {
+				search = safeString(input.Search)
+			}
+		}
+
+		res, err := r.UserGraphql.UserClient.UserQueryClient.FindAll(ctx, &pb.FindAllUserRequest{
+			Page:     page,
+			PageSize: pageSize,
+			Search:   search,
+		})
+		if err != nil {
+			return nil, r.handleGraphQLError(err, "FindAllUsers")
+		}
+
+		so := r.UserGraphql.Mapping.ToGraphqlResponsePaginationUser(res)
+		return so, nil
+	})
 }
 
 // FindByIDUser is the resolver for the findByIdUser field.
@@ -233,10 +258,62 @@ func (r *queryResolver) FindByIDUser(ctx context.Context, input model.FindByIDUs
 
 // FindByActiveUsers is the resolver for the findByActiveUsers field.
 func (r *queryResolver) FindByActiveUsers(ctx context.Context, input *model.FindAllUserInput) (*model.APIResponsePaginationUserDeleteAt, error) {
-	panic(fmt.Errorf("not implemented: FindByActiveUsers - findByActiveUsers"))
+	return ResolverHandle(r.ResolverHandle, "FindByActiveUsers", ctx, func(ctx context.Context) (*model.APIResponsePaginationUserDeleteAt, error) {
+		var page, pageSize int32
+		var search string
+		if input != nil {
+			if input.Page != nil {
+				page = int32(*input.Page)
+			}
+			if input.PageSize != nil {
+				pageSize = int32(*input.PageSize)
+			}
+			if input.Search != nil {
+				search = safeString(input.Search)
+			}
+		}
+
+		res, err := r.UserGraphql.UserClient.UserQueryClient.FindByActive(ctx, &pb.FindAllUserRequest{
+			Page:     page,
+			PageSize: pageSize,
+			Search:   search,
+		})
+		if err != nil {
+			return nil, r.handleGraphQLError(err, "FindByActiveUsers")
+		}
+
+		so := r.UserGraphql.Mapping.ToGraphqlResponsePaginationUserDeleteAt(res)
+		return so, nil
+	})
 }
 
 // FindByTrashedUsers is the resolver for the findByTrashedUsers field.
 func (r *queryResolver) FindByTrashedUsers(ctx context.Context, input *model.FindAllUserInput) (*model.APIResponsePaginationUserDeleteAt, error) {
-	panic(fmt.Errorf("not implemented: FindByTrashedUsers - findByTrashedUsers"))
+	return ResolverHandle(r.ResolverHandle, "FindByTrashedUsers", ctx, func(ctx context.Context) (*model.APIResponsePaginationUserDeleteAt, error) {
+		var page, pageSize int32
+		var search string
+		if input != nil {
+			if input.Page != nil {
+				page = int32(*input.Page)
+			}
+			if input.PageSize != nil {
+				pageSize = int32(*input.PageSize)
+			}
+			if input.Search != nil {
+				search = safeString(input.Search)
+			}
+		}
+
+		res, err := r.UserGraphql.UserClient.UserCommandClient.FindByTrashed(ctx, &pb.FindAllUserRequest{
+			Page:     page,
+			PageSize: pageSize,
+			Search:   search,
+		})
+		if err != nil {
+			return nil, r.handleGraphQLError(err, "FindByTrashedUsers")
+		}
+
+		so := r.UserGraphql.Mapping.ToGraphqlResponsePaginationUserDeleteAt(res)
+		return so, nil
+	})
 }

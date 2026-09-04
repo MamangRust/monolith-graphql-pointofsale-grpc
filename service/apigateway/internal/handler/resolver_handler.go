@@ -4,8 +4,8 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/MamangRust/monolith-point-of-sale-pkg/logger"
-	"github.com/MamangRust/monolith-point-of-sale-shared/observability"
+	"github.com/MamangRust/monolith-graphql-pointofsale-pkg/logger"
+	"github.com/MamangRust/monolith-graphql-pointofsale-shared/observability"
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/codes"
 	"go.opentelemetry.io/otel/trace"
@@ -63,4 +63,11 @@ func (h *resolverHandler) handleResolverError(err error, span trace.Span, method
 	)
 	span.RecordError(err)
 	span.SetStatus(codes.Error, err.Error())
+}
+
+func safeString(p *string) string {
+	if p == nil {
+		return ""
+	}
+	return *p
 }

@@ -10,9 +10,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/MamangRust/monolith-point-of-sale-shared/domain/response"
+	"github.com/MamangRust/monolith-graphql-pointofsale-shared/domain/response"
 
-	"github.com/MamangRust/monolith-point-of-sale-pkg/logger"
+	"github.com/MamangRust/monolith-graphql-pointofsale-pkg/logger"
 
 	"github.com/labstack/echo/v4"
 	"go.uber.org/zap"
@@ -29,8 +29,8 @@ type ImageUpload struct {
 	logger logger.LoggerInterface
 }
 
-func NewImageUpload() ImageUploads {
-	return &ImageUpload{}
+func NewImageUpload(logger logger.LoggerInterface) ImageUploads {
+	return &ImageUpload{logger: logger}
 }
 
 func (h *ImageUpload) EnsureUploadDirectory(uploadDir string) error {

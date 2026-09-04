@@ -2,7 +2,7 @@ package authgraphqlmapper
 
 import (
 	"github.com/MamangRust/monolith-graphql-pointofsale-apigateway/internal/model"
-	pb "github.com/MamangRust/monolith-graphql-pointofsale-pb/auth"
+	pb "github.com/MamangRust/monolith-graphql-pointofsale-pb"
 	userpb "github.com/MamangRust/monolith-graphql-pointofsale-pb/user"
 )
 

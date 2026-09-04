@@ -1,16 +1,15 @@
 package protomapper
 
 import (
-	"github.com/MamangRust/monolith-point-of-sale-shared/domain/response"
+	"github.com/MamangRust/monolith-graphql-pointofsale-shared/domain/response"
 
-	pb "github.com/MamangRust/monolith-graphql-pointofsale-pb/api"
-	pbauth "github.com/MamangRust/monolith-graphql-pointofsale-pb/auth"
 	pbcashier "github.com/MamangRust/monolith-graphql-pointofsale-pb/cashier"
 	pbcategory "github.com/MamangRust/monolith-graphql-pointofsale-pb/category"
+	pbcommon "github.com/MamangRust/monolith-graphql-pointofsale-pb/common"
 	pbmerchant "github.com/MamangRust/monolith-graphql-pointofsale-pb/merchant"
 	pbmerchant_document "github.com/MamangRust/monolith-graphql-pointofsale-pb/merchant_document"
 	pborder "github.com/MamangRust/monolith-graphql-pointofsale-pb/order"
-	pborder_item "github.com/MamangRust/monolith-graphql-pointofsale-pb/order_item"
+	pb "github.com/MamangRust/monolith-graphql-pointofsale-pb"
 	pbproduct "github.com/MamangRust/monolith-graphql-pointofsale-pb/product"
 	pbrole "github.com/MamangRust/monolith-graphql-pointofsale-pb/role"
 	pbtransaction "github.com/MamangRust/monolith-graphql-pointofsale-pb/transaction"
@@ -18,13 +17,13 @@ import (
 )
 
 type AuthProtoMapper interface {
-	ToProtoResponseVerifyCode(status string, message string) *pbauth.ApiResponseVerifyCode
-	ToProtoResponseForgotPassword(status string, message string) *pbauth.ApiResponseForgotPassword
-	ToProtoResponseResetPassword(status string, message string) *pbauth.ApiResponseResetPassword
-	ToProtoResponseLogin(status string, message string, response *response.TokenResponse) *pbauth.ApiResponseLogin
-	ToProtoResponseRegister(status string, message string, response *response.UserResponse) *pbauth.ApiResponseRegister
-	ToProtoResponseRefreshToken(status string, message string, response *response.TokenResponse) *pbauth.ApiResponseRefreshToken
-	ToProtoResponseGetMe(status string, message string, response *response.UserResponse) *pbauth.ApiResponseGetMe
+	ToProtoResponseVerifyCode(status string, message string) *pb.ApiResponseVerifyCode
+	ToProtoResponseForgotPassword(status string, message string) *pb.ApiResponseForgotPassword
+	ToProtoResponseResetPassword(status string, message string) *pb.ApiResponseResetPassword
+	ToProtoResponseLogin(status string, message string, response *response.TokenResponse) *pb.ApiResponseLogin
+	ToProtoResponseRegister(status string, message string, response *response.UserResponse) *pb.ApiResponseRegister
+	ToProtoResponseRefreshToken(status string, message string, response *response.TokenResponse) *pb.ApiResponseRefreshToken
+	ToProtoResponseGetMe(status string, message string, response *response.UserResponse) *pb.ApiResponseGetMe
 }
 
 type UserProtoMapper interface {
@@ -33,8 +32,8 @@ type UserProtoMapper interface {
 	ToProtoResponseUser(status string, message string, pbResponse *response.UserResponse) *pbuser.ApiResponseUser
 	ToProtoResponseUserDelete(status string, message string) *pbuser.ApiResponseUserDelete
 	ToProtoResponseUserAll(status string, message string) *pbuser.ApiResponseUserAll
-	ToProtoResponsePaginationUserDeleteAt(pagination *pb.PaginationMeta, status string, message string, users []*response.UserResponseDeleteAt) *pbuser.ApiResponsePaginationUserDeleteAt
-	ToProtoResponsePaginationUser(pagination *pb.PaginationMeta, status string, message string, users []*response.UserResponse) *pbuser.ApiResponsePaginationUser
+	ToProtoResponsePaginationUserDeleteAt(pagination *pbcommon.PaginationMeta, status string, message string, users []*response.UserResponseDeleteAt) *pbuser.ApiResponsePaginationUserDeleteAt
+	ToProtoResponsePaginationUser(pagination *pbcommon.PaginationMeta, status string, message string, users []*response.UserResponse) *pbuser.ApiResponsePaginationUser
 }
 
 type RoleProtoMapper interface {
@@ -42,8 +41,8 @@ type RoleProtoMapper interface {
 	ToProtoResponseRoleDelete(status string, message string) *pbrole.ApiResponseRoleDelete
 	ToProtoResponseRole(status string, message string, pbResponse *response.RoleResponse) *pbrole.ApiResponseRole
 	ToProtoResponsesRole(status string, message string, pbResponse []*response.RoleResponse) *pbrole.ApiResponsesRole
-	ToProtoResponsePaginationRole(pagination *pb.PaginationMeta, status string, message string, pbResponse []*response.RoleResponse) *pbrole.ApiResponsePaginationRole
-	ToProtoResponsePaginationRoleDeleteAt(pagination *pb.PaginationMeta, status string, message string, pbResponse []*response.RoleResponseDeleteAt) *pbrole.ApiResponsePaginationRoleDeleteAt
+	ToProtoResponsePaginationRole(pagination *pbcommon.PaginationMeta, status string, message string, pbResponse []*response.RoleResponse) *pbrole.ApiResponsePaginationRole
+	ToProtoResponsePaginationRoleDeleteAt(pagination *pbcommon.PaginationMeta, status string, message string, pbResponse []*response.RoleResponseDeleteAt) *pbrole.ApiResponsePaginationRoleDeleteAt
 }
 
 type CategoryProtoMapper interface {
@@ -58,8 +57,8 @@ type CategoryProtoMapper interface {
 	ToProtoResponseCategoryAll(status string, message string) *pbcategory.ApiResponseCategoryAll
 	ToProtoResponseCategory(status string, message string, pbResponse *response.CategoryResponse) *pbcategory.ApiResponseCategory
 	ToProtoResponseCategoryDelete(status string, message string) *pbcategory.ApiResponseCategoryDelete
-	ToProtoResponsePaginationCategoryDeleteAt(pagination *pb.PaginationMeta, status string, message string, categories []*response.CategoryResponseDeleteAt) *pbcategory.ApiResponsePaginationCategoryDeleteAt
-	ToProtoResponsePaginationCategory(pagination *pb.PaginationMeta, status string, message string, categories []*response.CategoryResponse) *pbcategory.ApiResponsePaginationCategory
+	ToProtoResponsePaginationCategoryDeleteAt(pagination *pbcommon.PaginationMeta, status string, message string, categories []*response.CategoryResponseDeleteAt) *pbcategory.ApiResponsePaginationCategoryDeleteAt
+	ToProtoResponsePaginationCategory(pagination *pbcommon.PaginationMeta, status string, message string, categories []*response.CategoryResponse) *pbcategory.ApiResponsePaginationCategory
 }
 
 type CashierProtoMapper interface {
@@ -74,8 +73,8 @@ type CashierProtoMapper interface {
 	ToProtoResponsesCashier(status string, message string, pbResponse []*response.CashierResponse) *pbcashier.ApiResponsesCashier
 	ToProtoResponseCashierDelete(status string, message string) *pbcashier.ApiResponseCashierDelete
 	ToProtoResponseCashierAll(status string, message string) *pbcashier.ApiResponseCashierAll
-	ToProtoResponsePaginationCashierDeleteAt(pagination *pb.PaginationMeta, status string, message string, users []*response.CashierResponseDeleteAt) *pbcashier.ApiResponsePaginationCashierDeleteAt
-	ToProtoResponsePaginationCashier(pagination *pb.PaginationMeta, status string, message string, users []*response.CashierResponse) *pbcashier.ApiResponsePaginationCashier
+	ToProtoResponsePaginationCashierDeleteAt(pagination *pbcommon.PaginationMeta, status string, message string, users []*response.CashierResponseDeleteAt) *pbcashier.ApiResponsePaginationCashierDeleteAt
+	ToProtoResponsePaginationCashier(pagination *pbcommon.PaginationMeta, status string, message string, users []*response.CashierResponse) *pbcashier.ApiResponsePaginationCashier
 }
 
 type MerchantProtoMapper interface {
@@ -85,16 +84,16 @@ type MerchantProtoMapper interface {
 	ToProtoResponsesMerchant(status string, message string, pbResponse []*response.MerchantResponse) *pbmerchant.ApiResponsesMerchant
 	ToProtoResponseMerchantDelete(status string, message string) *pbmerchant.ApiResponseMerchantDelete
 	ToProtoResponseMerchantAll(status string, message string) *pbmerchant.ApiResponseMerchantAll
-	ToProtoResponsePaginationMerchantDeleteAt(pagination *pb.PaginationMeta, status string, message string, merchants []*response.MerchantResponseDeleteAt) *pbmerchant.ApiResponsePaginationMerchantDeleteAt
-	ToProtoResponsePaginationMerchant(pagination *pb.PaginationMeta, status string, message string, merchants []*response.MerchantResponse) *pbmerchant.ApiResponsePaginationMerchant
+	ToProtoResponsePaginationMerchantDeleteAt(pagination *pbcommon.PaginationMeta, status string, message string, merchants []*response.MerchantResponseDeleteAt) *pbmerchant.ApiResponsePaginationMerchantDeleteAt
+	ToProtoResponsePaginationMerchant(pagination *pbcommon.PaginationMeta, status string, message string, merchants []*response.MerchantResponse) *pbmerchant.ApiResponsePaginationMerchant
 }
 
 type MerchantDocumentProtoMapper interface {
 	ToProtoResponseMerchantDocument(status string, message string, doc *response.MerchantDocumentResponse) *pbmerchant_document.ApiResponseMerchantDocument
 	ToProtoResponsesMerchantDocument(status string, message string, docs []*response.MerchantDocumentResponse) *pbmerchant_document.ApiResponsesMerchantDocument
 
-	ToProtoResponsePaginationMerchantDocument(pagination *pb.PaginationMeta, status string, message string, docs []*response.MerchantDocumentResponse) *pbmerchant_document.ApiResponsePaginationMerchantDocument
-	ToProtoResponsePaginationMerchantDocumentDeleteAt(pagination *pb.PaginationMeta, status string, message string, docs []*response.MerchantDocumentResponseDeleteAt) *pbmerchant_document.ApiResponsePaginationMerchantDocumentAt
+	ToProtoResponsePaginationMerchantDocument(pagination *pbcommon.PaginationMeta, status string, message string, docs []*response.MerchantDocumentResponse) *pbmerchant_document.ApiResponsePaginationMerchantDocument
+	ToProtoResponsePaginationMerchantDocumentDeleteAt(pagination *pbcommon.PaginationMeta, status string, message string, docs []*response.MerchantDocumentResponseDeleteAt) *pbmerchant_document.ApiResponsePaginationMerchantDocumentAt
 
 	ToProtoResponseMerchantDocumentDelete(status string, message string) *pbmerchant_document.ApiResponseMerchantDocumentDelete
 
@@ -102,12 +101,12 @@ type MerchantDocumentProtoMapper interface {
 }
 
 type OrderItemProtoMapper interface {
-	ToProtoResponseOrderItem(status string, message string, pbResponse *response.OrderItemResponse) *pborder_item.ApiResponseOrderItem
-	ToProtoResponsesOrderItem(status string, message string, pbResponse []*response.OrderItemResponse) *pborder_item.ApiResponsesOrderItem
-	ToProtoResponseOrderItemDelete(status string, message string) *pborder_item.ApiResponseOrderItemDelete
-	ToProtoResponseOrderItemAll(status string, message string) *pborder_item.ApiResponseOrderItemAll
-	ToProtoResponsePaginationOrderItemDeleteAt(pagination *pb.PaginationMeta, status string, message string, orderItems []*response.OrderItemResponseDeleteAt) *pborder_item.ApiResponsePaginationOrderItemDeleteAt
-	ToProtoResponsePaginationOrderItem(pagination *pb.PaginationMeta, status string, message string, orderItems []*response.OrderItemResponse) *pborder_item.ApiResponsePaginationOrderItem
+	ToProtoResponseOrderItem(status string, message string, pbResponse *response.OrderItemResponse) *pb.ApiResponseOrderItem
+	ToProtoResponsesOrderItem(status string, message string, pbResponse []*response.OrderItemResponse) *pb.ApiResponsesOrderItem
+	ToProtoResponseOrderItemDelete(status string, message string) *pb.ApiResponseOrderItemDelete
+	ToProtoResponseOrderItemAll(status string, message string) *pb.ApiResponseOrderItemAll
+	ToProtoResponsePaginationOrderItemDeleteAt(pagination *pbcommon.PaginationMeta, status string, message string, orderItems []*response.OrderItemResponseDeleteAt) *pb.ApiResponsePaginationOrderItemDeleteAt
+	ToProtoResponsePaginationOrderItem(pagination *pbcommon.PaginationMeta, status string, message string, orderItems []*response.OrderItemResponse) *pb.ApiResponsePaginationOrderItem
 }
 
 type OrderProtoMapper interface {
@@ -122,8 +121,8 @@ type OrderProtoMapper interface {
 	ToProtoResponsesOrder(status string, message string, pbResponse []*response.OrderResponse) *pborder.ApiResponsesOrder
 	ToProtoResponseOrderDelete(status string, message string) *pborder.ApiResponseOrderDelete
 	ToProtoResponseOrderAll(status string, message string) *pborder.ApiResponseOrderAll
-	ToProtoResponsePaginationOrderDeleteAt(pagination *pb.PaginationMeta, status string, message string, orders []*response.OrderResponseDeleteAt) *pborder.ApiResponsePaginationOrderDeleteAt
-	ToProtoResponsePaginationOrder(pagination *pb.PaginationMeta, status string, message string, orders []*response.OrderResponse) *pborder.ApiResponsePaginationOrder
+	ToProtoResponsePaginationOrderDeleteAt(pagination *pbcommon.PaginationMeta, status string, message string, orders []*response.OrderResponseDeleteAt) *pborder.ApiResponsePaginationOrderDeleteAt
+	ToProtoResponsePaginationOrder(pagination *pbcommon.PaginationMeta, status string, message string, orders []*response.OrderResponse) *pborder.ApiResponsePaginationOrder
 }
 
 type ProductProtoMapper interface {
@@ -133,8 +132,8 @@ type ProductProtoMapper interface {
 	ToProtoResponsesProduct(status string, message string, pbResponse []*response.ProductResponse) *pbproduct.ApiResponsesProduct
 	ToProtoResponseProductDelete(status string, message string) *pbproduct.ApiResponseProductDelete
 	ToProtoResponseProductAll(status string, message string) *pbproduct.ApiResponseProductAll
-	ToProtoResponsePaginationProductDeleteAt(pagination *pb.PaginationMeta, status string, message string, products []*response.ProductResponseDeleteAt) *pbproduct.ApiResponsePaginationProductDeleteAt
-	ToProtoResponsePaginationProduct(pagination *pb.PaginationMeta, status string, message string, products []*response.ProductResponse) *pbproduct.ApiResponsePaginationProduct
+	ToProtoResponsePaginationProductDeleteAt(pagination *pbcommon.PaginationMeta, status string, message string, products []*response.ProductResponseDeleteAt) *pbproduct.ApiResponsePaginationProductDeleteAt
+	ToProtoResponsePaginationProduct(pagination *pbcommon.PaginationMeta, status string, message string, products []*response.ProductResponse) *pbproduct.ApiResponsePaginationProduct
 }
 
 type TransactionProtoMapper interface {
@@ -150,6 +149,6 @@ type TransactionProtoMapper interface {
 	ToProtoResponsesTransaction(status string, message string, transList []*response.TransactionResponse) *pbtransaction.ApiResponsesTransaction
 	ToProtoResponseTransactionDelete(status string, message string) *pbtransaction.ApiResponseTransactionDelete
 	ToProtoResponseTransactionAll(status string, message string) *pbtransaction.ApiResponseTransactionAll
-	ToProtoResponsePaginationTransactionDeleteAt(pagination *pb.PaginationMeta, status string, message string, transactions []*response.TransactionResponseDeleteAt) *pbtransaction.ApiResponsePaginationTransactionDeleteAt
-	ToProtoResponsePaginationTransaction(pagination *pb.PaginationMeta, status string, message string, transactions []*response.TransactionResponse) *pbtransaction.ApiResponsePaginationTransaction
+	ToProtoResponsePaginationTransactionDeleteAt(pagination *pbcommon.PaginationMeta, status string, message string, transactions []*response.TransactionResponseDeleteAt) *pbtransaction.ApiResponsePaginationTransactionDeleteAt
+	ToProtoResponsePaginationTransaction(pagination *pbcommon.PaginationMeta, status string, message string, transactions []*response.TransactionResponse) *pbtransaction.ApiResponsePaginationTransaction
 }

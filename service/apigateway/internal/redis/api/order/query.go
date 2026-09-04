@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"github.com/MamangRust/monolith-graphql-pointofsale-apigateway/internal/model"
-	"github.com/MamangRust/monolith-point-of-sale-shared/cache"
+	"github.com/MamangRust/monolith-graphql-pointofsale-shared/cache"
 )
 
 const (
@@ -28,7 +28,7 @@ func NewOrderQueryCache(store *cache.CacheStore) *orderQueryCache {
 }
 
 func (s *orderQueryCache) GetOrderAllCache(ctx context.Context, req *model.FindAllOrderInput) (*model.APIResponsePaginationOrder, bool) {
-	key := fmt.Sprintf(orderAllCacheKey, req.Page, req.PageSize, req.Search)
+	key := fmt.Sprintf(orderAllCacheKey, req.Page, req.PageSize, safeString(req.Search))
 
 	result, found := cache.GetFromCache[model.APIResponsePaginationOrder](ctx, s.store, key)
 
@@ -44,7 +44,7 @@ func (s *orderQueryCache) SetOrderAllCache(ctx context.Context, req *model.FindA
 		return
 	}
 
-	key := fmt.Sprintf(orderAllCacheKey, req.Page, req.PageSize, req.Search)
+	key := fmt.Sprintf(orderAllCacheKey, req.Page, req.PageSize, safeString(req.Search))
 	cache.SetToCache(ctx, s.store, key, res, ttlDefault)
 }
 
@@ -70,7 +70,7 @@ func (s *orderQueryCache) SetCachedOrderCache(ctx context.Context, res *model.AP
 }
 
 func (s *orderQueryCache) GetCachedOrderMerchant(ctx context.Context, req *model.FindAllOrderMerchantInput) (*model.APIResponsePaginationOrder, bool) {
-	key := fmt.Sprintf(orderMerchantCacheKey, req.MerchantID, req.Page, req.PageSize, req.Search)
+	key := fmt.Sprintf(orderMerchantCacheKey, req.MerchantID, req.Page, req.PageSize, safeString(req.Search))
 
 	result, found := cache.GetFromCache[model.APIResponsePaginationOrder](ctx, s.store, key)
 
@@ -86,12 +86,12 @@ func (s *orderQueryCache) SetCachedOrderMerchant(ctx context.Context, req *model
 		return
 	}
 
-	key := fmt.Sprintf(orderMerchantCacheKey, req.MerchantID, req.Page, req.PageSize, req.Search)
+	key := fmt.Sprintf(orderMerchantCacheKey, req.MerchantID, req.Page, req.PageSize, safeString(req.Search))
 	cache.SetToCache(ctx, s.store, key, res, ttlDefault)
 }
 
 func (s *orderQueryCache) GetOrderActiveCache(ctx context.Context, req *model.FindAllOrderInput) (*model.APIResponsePaginationOrderDeleteAt, bool) {
-	key := fmt.Sprintf(orderActiveCacheKey, req.Page, req.PageSize, req.Search)
+	key := fmt.Sprintf(orderActiveCacheKey, req.Page, req.PageSize, safeString(req.Search))
 
 	result, found := cache.GetFromCache[model.APIResponsePaginationOrderDeleteAt](ctx, s.store, key)
 
@@ -107,12 +107,12 @@ func (s *orderQueryCache) SetOrderActiveCache(ctx context.Context, req *model.Fi
 		return
 	}
 
-	key := fmt.Sprintf(orderActiveCacheKey, req.Page, req.PageSize, req.Search)
+	key := fmt.Sprintf(orderActiveCacheKey, req.Page, req.PageSize, safeString(req.Search))
 	cache.SetToCache(ctx, s.store, key, res, ttlDefault)
 }
 
 func (s *orderQueryCache) GetOrderTrashedCache(ctx context.Context, req *model.FindAllOrderInput) (*model.APIResponsePaginationOrderDeleteAt, bool) {
-	key := fmt.Sprintf(orderTrashedCacheKey, req.Page, req.PageSize, req.Search)
+	key := fmt.Sprintf(orderTrashedCacheKey, req.Page, req.PageSize, safeString(req.Search))
 
 	result, found := cache.GetFromCache[model.APIResponsePaginationOrderDeleteAt](ctx, s.store, key)
 
@@ -128,6 +128,13 @@ func (s *orderQueryCache) SetOrderTrashedCache(ctx context.Context, req *model.F
 		return
 	}
 
-	key := fmt.Sprintf(orderTrashedCacheKey, req.Page, req.PageSize, req.Search)
+	key := fmt.Sprintf(orderTrashedCacheKey, req.Page, req.PageSize, safeString(req.Search))
 	cache.SetToCache(ctx, s.store, key, res, ttlDefault)
+}
+
+func safeString(s *string) string {
+	if s == nil {
+		return ""
+	}
+	return *s
 }

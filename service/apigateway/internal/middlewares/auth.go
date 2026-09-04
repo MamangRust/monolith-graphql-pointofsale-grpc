@@ -10,8 +10,8 @@ import (
 	"time"
 
 	mycontext "github.com/MamangRust/monolith-graphql-pointofsale-apigateway/internal/context"
-	"github.com/MamangRust/monolith-point-of-sale-pkg/auth"
-	"github.com/MamangRust/monolith-point-of-sale-pkg/logger"
+	"github.com/MamangRust/monolith-graphql-pointofsale-pkg/auth"
+	"github.com/MamangRust/monolith-graphql-pointofsale-pkg/logger"
 	"go.uber.org/zap"
 )
 
@@ -90,6 +90,7 @@ func AuthMiddleware(tm auth.TokenManager, logger logger.LoggerInterface) func(ht
 			)
 
 			ctx := mycontext.WithUserID(r.Context(), userID)
+			ctx = mycontext.WithToken(ctx, tokenString)
 			next.ServeHTTP(w, r.WithContext(ctx))
 
 			logger.Debug("Request completed",

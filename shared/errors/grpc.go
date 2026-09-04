@@ -3,11 +3,10 @@ package errors
 import (
 	"encoding/json"
 
-	pb "github.com/MamangRust/monolith-graphql-pointofsale-pb/api"
+	pbcommon "github.com/MamangRust/monolith-graphql-pointofsale-pb/common"
 )
 
-func GrpcErrorToJson(err *pb.ErrorResponse) string {
+func GrpcErrorToJson(err *pbcommon.ErrorResponse) string {
 	jsonData, _ := json.Marshal(err)
 	return string(jsonData)
 }
-

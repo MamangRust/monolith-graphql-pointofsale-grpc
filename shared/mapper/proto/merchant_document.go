@@ -1,10 +1,11 @@
 package protomapper
 
 import (
-	pbutils "github.com/MamangRust/monolith-graphql-pointofsale-pb/api"
-	pb "github.com/MamangRust/monolith-graphql-pointofsale-pb/merchant_document"
-	"github.com/MamangRust/monolith-point-of-sale-shared/domain/response"
+	"github.com/MamangRust/monolith-graphql-pointofsale-shared/domain/response"
 	"google.golang.org/protobuf/types/known/wrapperspb"
+
+	pbcommon "github.com/MamangRust/monolith-graphql-pointofsale-pb/common"
+	pbmerchant_document "github.com/MamangRust/monolith-graphql-pointofsale-pb/merchant_document"
 )
 
 type merchantDocumentProtoMapper struct{}
@@ -13,24 +14,24 @@ func NewMerchantDocumentProtoMapper() *merchantDocumentProtoMapper {
 	return &merchantDocumentProtoMapper{}
 }
 
-func (m *merchantDocumentProtoMapper) ToProtoResponseMerchantDocument(status string, message string, doc *response.MerchantDocumentResponse) *pb.ApiResponseMerchantDocument {
-	return &pb.ApiResponseMerchantDocument{
+func (m *merchantDocumentProtoMapper) ToProtoResponseMerchantDocument(status string, message string, doc *response.MerchantDocumentResponse) *pbmerchant_document.ApiResponseMerchantDocument {
+	return &pbmerchant_document.ApiResponseMerchantDocument{
 		Status:  status,
 		Message: message,
 		Data:    m.mapMerchantDocument(doc),
 	}
 }
 
-func (m *merchantDocumentProtoMapper) ToProtoResponsesMerchantDocument(status string, message string, docs []*response.MerchantDocumentResponse) *pb.ApiResponsesMerchantDocument {
-	return &pb.ApiResponsesMerchantDocument{
+func (m *merchantDocumentProtoMapper) ToProtoResponsesMerchantDocument(status string, message string, docs []*response.MerchantDocumentResponse) *pbmerchant_document.ApiResponsesMerchantDocument {
+	return &pbmerchant_document.ApiResponsesMerchantDocument{
 		Status:  status,
 		Message: message,
 		Data:    m.mapMerchantDocuments(docs),
 	}
 }
 
-func (m *merchantDocumentProtoMapper) ToProtoResponsePaginationMerchantDocument(pagination *pbutils.PaginationMeta, status string, message string, docs []*response.MerchantDocumentResponse) *pb.ApiResponsePaginationMerchantDocument {
-	return &pb.ApiResponsePaginationMerchantDocument{
+func (m *merchantDocumentProtoMapper) ToProtoResponsePaginationMerchantDocument(pagination *pbcommon.PaginationMeta, status string, message string, docs []*response.MerchantDocumentResponse) *pbmerchant_document.ApiResponsePaginationMerchantDocument {
+	return &pbmerchant_document.ApiResponsePaginationMerchantDocument{
 		Status:     status,
 		Message:    message,
 		Data:       m.mapMerchantDocuments(docs),
@@ -38,8 +39,8 @@ func (m *merchantDocumentProtoMapper) ToProtoResponsePaginationMerchantDocument(
 	}
 }
 
-func (m *merchantDocumentProtoMapper) ToProtoResponsePaginationMerchantDocumentDeleteAt(pagination *pbutils.PaginationMeta, status string, message string, docs []*response.MerchantDocumentResponseDeleteAt) *pb.ApiResponsePaginationMerchantDocumentAt {
-	return &pb.ApiResponsePaginationMerchantDocumentAt{
+func (m *merchantDocumentProtoMapper) ToProtoResponsePaginationMerchantDocumentDeleteAt(pagination *pbcommon.PaginationMeta, status string, message string, docs []*response.MerchantDocumentResponseDeleteAt) *pbmerchant_document.ApiResponsePaginationMerchantDocumentAt {
+	return &pbmerchant_document.ApiResponsePaginationMerchantDocumentAt{
 		Status:     status,
 		Message:    message,
 		Data:       m.mapMerchantDocumentsDeleteAt(docs),
@@ -47,22 +48,22 @@ func (m *merchantDocumentProtoMapper) ToProtoResponsePaginationMerchantDocumentD
 	}
 }
 
-func (m *merchantDocumentProtoMapper) ToProtoResponseMerchantDocumentDelete(status string, message string) *pb.ApiResponseMerchantDocumentDelete {
-	return &pb.ApiResponseMerchantDocumentDelete{
+func (m *merchantDocumentProtoMapper) ToProtoResponseMerchantDocumentDelete(status string, message string) *pbmerchant_document.ApiResponseMerchantDocumentDelete {
+	return &pbmerchant_document.ApiResponseMerchantDocumentDelete{
 		Status:  status,
 		Message: message,
 	}
 }
 
-func (m *merchantDocumentProtoMapper) ToProtoResponseMerchantDocumentAll(status string, message string) *pb.ApiResponseMerchantDocumentAll {
-	return &pb.ApiResponseMerchantDocumentAll{
+func (m *merchantDocumentProtoMapper) ToProtoResponseMerchantDocumentAll(status string, message string) *pbmerchant_document.ApiResponseMerchantDocumentAll {
+	return &pbmerchant_document.ApiResponseMerchantDocumentAll{
 		Status:  status,
 		Message: message,
 	}
 }
 
-func (m *merchantDocumentProtoMapper) mapMerchantDocument(doc *response.MerchantDocumentResponse) *pb.MerchantDocument {
-	return &pb.MerchantDocument{
+func (m *merchantDocumentProtoMapper) mapMerchantDocument(doc *response.MerchantDocumentResponse) *pbmerchant_document.MerchantDocument {
+	return &pbmerchant_document.MerchantDocument{
 		DocumentId:   int32(doc.ID),
 		MerchantId:   int32(doc.MerchantID),
 		DocumentType: doc.DocumentType,
@@ -74,21 +75,21 @@ func (m *merchantDocumentProtoMapper) mapMerchantDocument(doc *response.Merchant
 	}
 }
 
-func (m *merchantDocumentProtoMapper) mapMerchantDocuments(docs []*response.MerchantDocumentResponse) []*pb.MerchantDocument {
-	var res []*pb.MerchantDocument
+func (m *merchantDocumentProtoMapper) mapMerchantDocuments(docs []*response.MerchantDocumentResponse) []*pbmerchant_document.MerchantDocument {
+	var res []*pbmerchant_document.MerchantDocument
 	for _, doc := range docs {
 		res = append(res, m.mapMerchantDocument(doc))
 	}
 	return res
 }
 
-func (m *merchantDocumentProtoMapper) mapMerchantDocumentDeleteAt(doc *response.MerchantDocumentResponseDeleteAt) *pb.MerchantDocumentDeleteAt {
+func (m *merchantDocumentProtoMapper) mapMerchantDocumentDeleteAt(doc *response.MerchantDocumentResponseDeleteAt) *pbmerchant_document.MerchantDocumentDeleteAt {
 	var deletedAt *wrapperspb.StringValue
 	if doc.DeletedAt != nil {
 		deletedAt = wrapperspb.String(*doc.DeletedAt)
 	}
 
-	return &pb.MerchantDocumentDeleteAt{
+	return &pbmerchant_document.MerchantDocumentDeleteAt{
 		DocumentId:   int32(doc.ID),
 		MerchantId:   int32(doc.MerchantID),
 		DocumentType: doc.DocumentType,
@@ -101,8 +102,8 @@ func (m *merchantDocumentProtoMapper) mapMerchantDocumentDeleteAt(doc *response.
 	}
 }
 
-func (m *merchantDocumentProtoMapper) mapMerchantDocumentsDeleteAt(docs []*response.MerchantDocumentResponseDeleteAt) []*pb.MerchantDocumentDeleteAt {
-	var res []*pb.MerchantDocumentDeleteAt
+func (m *merchantDocumentProtoMapper) mapMerchantDocumentsDeleteAt(docs []*response.MerchantDocumentResponseDeleteAt) []*pbmerchant_document.MerchantDocumentDeleteAt {
+	var res []*pbmerchant_document.MerchantDocumentDeleteAt
 	for _, doc := range docs {
 		res = append(res, m.mapMerchantDocumentDeleteAt(doc))
 	}

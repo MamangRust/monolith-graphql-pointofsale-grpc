@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	sharedcachehelpers "github.com/MamangRust/monolith-point-of-sale-shared/cache"
+	sharedcachehelpers "github.com/MamangRust/monolith-graphql-pointofsale-shared/cache"
 )
 
 type roleCache struct {

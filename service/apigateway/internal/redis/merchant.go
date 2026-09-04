@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	sharedcachehelpers "github.com/MamangRust/monolith-point-of-sale-shared/cache"
+	sharedcachehelpers "github.com/MamangRust/monolith-graphql-pointofsale-shared/cache"
 )
 
 type merchantCache struct {
@@ -31,7 +31,7 @@ func (c *merchantCache) SetMerchantCache(ctx context.Context, merchantID string,
 		return
 	}
 
-	key := fmt.Sprintf(cacheMerchantKey, merchantID, apiKey)
+	key := fmt.Sprintf(cacheMerchantKey, apiKey)
 
 	sharedcachehelpers.SetToCache(ctx, c.store, key, &merchantID, ttlDefault)
 }

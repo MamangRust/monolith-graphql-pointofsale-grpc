@@ -10,9 +10,9 @@ import (
 
 	mycontext "github.com/MamangRust/monolith-graphql-pointofsale-apigateway/internal/context"
 	"github.com/MamangRust/monolith-graphql-pointofsale-apigateway/internal/model"
-	pb "github.com/MamangRust/monolith-graphql-pointofsale-pb/auth"
-	"github.com/MamangRust/monolith-point-of-sale-shared/domain/requests"
-	sharedErrors "github.com/MamangRust/monolith-point-of-sale-shared/errors"
+	pb "github.com/MamangRust/monolith-graphql-pointofsale-pb"
+	"github.com/MamangRust/monolith-graphql-pointofsale-shared/domain/requests"
+	sharedErrors "github.com/MamangRust/monolith-graphql-pointofsale-shared/errors"
 )
 
 // VerifyCode is the resolver for the verifyCode field.
@@ -136,12 +136,17 @@ func (r *queryResolver) GetMe(ctx context.Context, input model.GetMeInput) (*mod
 			return nil, fmt.Errorf("unauthorized: user ID not found in request context")
 		}
 
+		token, ok := mycontext.TokenFromContext(ctx)
+		if !ok || token == "" {
+			return nil, fmt.Errorf("unauthorized: access token not found in request context")
+		}
+
 		cachedResponse, found := r.AuthGraphql.Cache.GetCachedUserInfo(ctx, uid)
 		if found {
 			return cachedResponse, nil
 		}
 
-		res, err := r.AuthGraphql.AuthClient.GetMe(ctx, &pb.GetMeRequest{UserId: int32(uid)})
+		res, err := r.AuthGraphql.AuthClient.GetMe(ctx, &pb.GetMeRequest{AccessToken: token})
 
 		if err != nil {
 			return nil, r.handleGraphQLError(err, "GetMe")

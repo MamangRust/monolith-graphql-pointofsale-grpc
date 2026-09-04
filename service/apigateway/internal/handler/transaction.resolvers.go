@@ -6,18 +6,16 @@ package graph
 
 import (
 	"context"
-
-	"github.com/MamangRust/monolith-point-of-sale-shared/errors"
+	errors "github.com/MamangRust/monolith-graphql-pointofsale-shared/errors"
 
 	"github.com/MamangRust/monolith-graphql-pointofsale-apigateway/internal/model"
-	model1 "github.com/MamangRust/monolith-graphql-pointofsale-apigateway/internal/model"
 	pb "github.com/MamangRust/monolith-graphql-pointofsale-pb/transaction"
-	"github.com/MamangRust/monolith-point-of-sale-shared/domain/requests"
+	"github.com/MamangRust/monolith-graphql-pointofsale-shared/domain/requests"
 	"google.golang.org/protobuf/types/known/emptypb"
 )
 
 // CreateTransaction is the resolver for the createTransaction field.
-func (r *mutationResolver) CreateTransaction(ctx context.Context, input model1.CreateTransactionInput) (*model1.APIResponseTransaction, error) {
+func (r *mutationResolver) CreateTransaction(ctx context.Context, input model.CreateTransactionInput) (*model.APIResponseTransaction, error) {
 	return ResolverHandle(r.ResolverHandle, "CreateTransaction", ctx, func(ctx context.Context) (*model.APIResponseTransaction, error) {
 
 		req := &requests.CreateTransactionRequest{
@@ -53,7 +51,7 @@ func (r *mutationResolver) CreateTransaction(ctx context.Context, input model1.C
 }
 
 // UpdateTransaction is the resolver for the updateTransaction field.
-func (r *mutationResolver) UpdateTransaction(ctx context.Context, input model1.UpdateTransactionInput) (*model1.APIResponseTransaction, error) {
+func (r *mutationResolver) UpdateTransaction(ctx context.Context, input model.UpdateTransactionInput) (*model.APIResponseTransaction, error) {
 	return ResolverHandle(r.ResolverHandle, "UpdateTransaction", ctx, func(ctx context.Context) (*model.APIResponseTransaction, error) {
 		id := int(input.TransactionID)
 
@@ -96,7 +94,7 @@ func (r *mutationResolver) UpdateTransaction(ctx context.Context, input model1.U
 }
 
 // TrashedTransaction is the resolver for the trashedTransaction field.
-func (r *mutationResolver) TrashedTransaction(ctx context.Context, input model1.FindByIDTransactionInput) (*model1.APIResponseTransactionDeleteAt, error) {
+func (r *mutationResolver) TrashedTransaction(ctx context.Context, input model.FindByIDTransactionInput) (*model.APIResponseTransactionDeleteAt, error) {
 	return ResolverHandle(r.ResolverHandle, "TrashedTransaction", ctx, func(ctx context.Context) (*model.APIResponseTransactionDeleteAt, error) {
 		id := int(input.ID)
 
@@ -122,7 +120,7 @@ func (r *mutationResolver) TrashedTransaction(ctx context.Context, input model1.
 }
 
 // RestoreTransaction is the resolver for the restoreTransaction field.
-func (r *mutationResolver) RestoreTransaction(ctx context.Context, input model1.FindByIDTransactionInput) (*model1.APIResponseTransactionDeleteAt, error) {
+func (r *mutationResolver) RestoreTransaction(ctx context.Context, input model.FindByIDTransactionInput) (*model.APIResponseTransactionDeleteAt, error) {
 	return ResolverHandle(r.ResolverHandle, "RestoreTransaction", ctx, func(ctx context.Context) (*model.APIResponseTransactionDeleteAt, error) {
 		id := int(input.ID)
 
@@ -148,7 +146,7 @@ func (r *mutationResolver) RestoreTransaction(ctx context.Context, input model1.
 }
 
 // DeleteTransactionPermanent is the resolver for the deleteTransactionPermanent field.
-func (r *mutationResolver) DeleteTransactionPermanent(ctx context.Context, input model1.FindByIDTransactionInput) (*model1.APIResponseTransactionDelete, error) {
+func (r *mutationResolver) DeleteTransactionPermanent(ctx context.Context, input model.FindByIDTransactionInput) (*model.APIResponseTransactionDelete, error) {
 	return ResolverHandle(r.ResolverHandle, "DeleteTransactionPermanent", ctx, func(ctx context.Context) (*model.APIResponseTransactionDelete, error) {
 		id := int(input.ID)
 
@@ -174,7 +172,7 @@ func (r *mutationResolver) DeleteTransactionPermanent(ctx context.Context, input
 }
 
 // RestoreAllTransaction is the resolver for the restoreAllTransaction field.
-func (r *mutationResolver) RestoreAllTransaction(ctx context.Context) (*model1.APIResponseTransactionAll, error) {
+func (r *mutationResolver) RestoreAllTransaction(ctx context.Context) (*model.APIResponseTransactionAll, error) {
 	return ResolverHandle(r.ResolverHandle, "RestoreAllTransaction", ctx, func(ctx context.Context) (*model.APIResponseTransactionAll, error) {
 		// Bugfix: Kode asli memanggil DeleteAllTransactionPermanent. Saya ubah ke RestoreAllTransaction.
 		res, err := r.TransactionGraphql.TransactionClient.RestoreAllTransaction(ctx, &emptypb.Empty{})
@@ -189,7 +187,7 @@ func (r *mutationResolver) RestoreAllTransaction(ctx context.Context) (*model1.A
 }
 
 // DeleteAllTransactionPermanent is the resolver for the deleteAllTransactionPermanent field.
-func (r *mutationResolver) DeleteAllTransactionPermanent(ctx context.Context) (*model1.APIResponseTransactionAll, error) {
+func (r *mutationResolver) DeleteAllTransactionPermanent(ctx context.Context) (*model.APIResponseTransactionAll, error) {
 	return ResolverHandle(r.ResolverHandle, "DeleteAllTransactionPermanent", ctx, func(ctx context.Context) (*model.APIResponseTransactionAll, error) {
 		res, err := r.TransactionGraphql.TransactionClient.DeleteAllTransactionPermanent(ctx, &emptypb.Empty{})
 		if err != nil {
@@ -203,7 +201,7 @@ func (r *mutationResolver) DeleteAllTransactionPermanent(ctx context.Context) (*
 }
 
 // FindAllTransaction is the resolver for the findAllTransaction field.
-func (r *queryResolver) FindAllTransaction(ctx context.Context, input *model1.FindAllTransactionInput) (*model1.APIResponsePaginationTransaction, error) {
+func (r *queryResolver) FindAllTransaction(ctx context.Context, input *model.FindAllTransactionInput) (*model.APIResponsePaginationTransaction, error) {
 	return ResolverHandle(r.ResolverHandle, "FindAllTransaction", ctx, func(ctx context.Context) (*model.APIResponsePaginationTransaction, error) {
 		page := int32(*input.Page)
 		pageSize := int32(*input.PageSize)
@@ -227,7 +225,7 @@ func (r *queryResolver) FindAllTransaction(ctx context.Context, input *model1.Fi
 		req := &pb.FindAllTransactionRequest{
 			Page:     int32(page),
 			PageSize: int32(pageSize),
-			Search:   *input.Search,
+			Search:   safeString(input.Search),
 		}
 		transactions, err := r.TransactionGraphql.TransactionClient.FindAll(ctx, req)
 		if err != nil {
@@ -243,7 +241,7 @@ func (r *queryResolver) FindAllTransaction(ctx context.Context, input *model1.Fi
 }
 
 // FindTransactionByMerchant is the resolver for the findTransactionByMerchant field.
-func (r *queryResolver) FindByMerchantTransaction(ctx context.Context, input model1.FindAllTransactionMerchantInput) (*model1.APIResponsePaginationTransaction, error) {
+func (r *queryResolver) FindByMerchantTransaction(ctx context.Context, input model.FindAllTransactionMerchantInput) (*model.APIResponsePaginationTransaction, error) {
 	return ResolverHandle(r.ResolverHandle, "FindByMerchantTransaction", ctx, func(ctx context.Context) (*model.APIResponsePaginationTransaction, error) {
 
 		page := int32(*input.Page)
@@ -275,7 +273,7 @@ func (r *queryResolver) FindByMerchantTransaction(ctx context.Context, input mod
 			Page:       int32(page),
 			PageSize:   int32(pageSize),
 			MerchantId: int32(merchantID),
-			Search:     *input.Search,
+			Search:     safeString(input.Search),
 		}
 		transactions, err := r.TransactionGraphql.TransactionClient.FindByMerchant(ctx, req)
 		if err != nil {
@@ -291,7 +289,7 @@ func (r *queryResolver) FindByMerchantTransaction(ctx context.Context, input mod
 }
 
 // FindByIDTransaction is the resolver for the findTransactionById field.
-func (r *queryResolver) FindByIDTransaction(ctx context.Context, input model1.FindByIDTransactionInput) (*model1.APIResponseTransaction, error) {
+func (r *queryResolver) FindByIDTransaction(ctx context.Context, input model.FindByIDTransactionInput) (*model.APIResponseTransaction, error) {
 	return ResolverHandle(r.ResolverHandle, "FindByIDTransaction", ctx, func(ctx context.Context) (*model.APIResponseTransaction, error) {
 		id := int(input.ID)
 		if id <= 0 {
@@ -318,7 +316,7 @@ func (r *queryResolver) FindByIDTransaction(ctx context.Context, input model1.Fi
 }
 
 // FindMonthStatusSuccess is the resolver for the findMonthStatusSuccess field.
-func (r *queryResolver) FindMonthStatusSuccess(ctx context.Context, input model1.FindMonthlyTransactionStatusInput) (*model1.APIResponseTransactionMonthAmountSuccess, error) {
+func (r *queryResolver) FindMonthStatusSuccess(ctx context.Context, input model.FindMonthlyTransactionStatusInput) (*model.APIResponseTransactionMonthAmountSuccess, error) {
 	return ResolverHandle(r.ResolverHandle, "FindMonthStatusSuccess", ctx, func(ctx context.Context) (*model.APIResponseTransactionMonthAmountSuccess, error) {
 		year := int(input.Year)
 		month := int(input.Month)
@@ -352,7 +350,7 @@ func (r *queryResolver) FindMonthStatusSuccess(ctx context.Context, input model1
 }
 
 // FindYearStatusSuccess is the resolver for the findYearStatusSuccess field.
-func (r *queryResolver) FindYearStatusSuccess(ctx context.Context, input model1.FindYearlyTransactionStatusInput) (*model1.APIResponseTransactionYearAmountSuccess, error) {
+func (r *queryResolver) FindYearStatusSuccess(ctx context.Context, input model.FindYearlyTransactionStatusInput) (*model.APIResponseTransactionYearAmountSuccess, error) {
 	return ResolverHandle(r.ResolverHandle, "FindYearStatusSuccess", ctx, func(ctx context.Context) (*model.APIResponseTransactionYearAmountSuccess, error) {
 		year := int(input.Year)
 		if year <= 0 {
@@ -379,7 +377,7 @@ func (r *queryResolver) FindYearStatusSuccess(ctx context.Context, input model1.
 }
 
 // FindMonthStatusFailed is the resolver for the findMonthStatusFailed field.
-func (r *queryResolver) FindMonthStatusFailed(ctx context.Context, input model1.FindMonthlyTransactionStatusInput) (*model1.APIResponseTransactionMonthAmountFailed, error) {
+func (r *queryResolver) FindMonthStatusFailed(ctx context.Context, input model.FindMonthlyTransactionStatusInput) (*model.APIResponseTransactionMonthAmountFailed, error) {
 	return ResolverHandle(r.ResolverHandle, "FindMonthStatusFailed", ctx, func(ctx context.Context) (*model.APIResponseTransactionMonthAmountFailed, error) {
 		year := int(input.Year)
 		month := int(input.Month)
@@ -413,7 +411,7 @@ func (r *queryResolver) FindMonthStatusFailed(ctx context.Context, input model1.
 }
 
 // FindYearStatusFailed is the resolver for the findYearStatusFailed field.
-func (r *queryResolver) FindYearStatusFailed(ctx context.Context, input model1.FindYearlyTransactionStatusInput) (*model1.APIResponseTransactionYearAmountFailed, error) {
+func (r *queryResolver) FindYearStatusFailed(ctx context.Context, input model.FindYearlyTransactionStatusInput) (*model.APIResponseTransactionYearAmountFailed, error) {
 	return ResolverHandle(r.ResolverHandle, "FindYearStatusFailed", ctx, func(ctx context.Context) (*model.APIResponseTransactionYearAmountFailed, error) {
 		year := int(input.Year)
 		if year <= 0 {
@@ -440,7 +438,7 @@ func (r *queryResolver) FindYearStatusFailed(ctx context.Context, input model1.F
 }
 
 // FindMonthStatusSuccessByMerchant is the resolver for the findMonthStatusSuccessByMerchant field.
-func (r *queryResolver) FindMonthStatusSuccessByMerchant(ctx context.Context, input model1.FindMonthlyTransactionStatusByMerchantInput) (*model1.APIResponseTransactionMonthAmountSuccess, error) {
+func (r *queryResolver) FindMonthStatusSuccessByMerchant(ctx context.Context, input model.FindMonthlyTransactionStatusByMerchantInput) (*model.APIResponseTransactionMonthAmountSuccess, error) {
 	return ResolverHandle(r.ResolverHandle, "FindMonthStatusSuccessByMerchant", ctx, func(ctx context.Context) (*model.APIResponseTransactionMonthAmountSuccess, error) {
 		year := int(input.Year)
 		month := int(input.Month)
@@ -479,7 +477,7 @@ func (r *queryResolver) FindMonthStatusSuccessByMerchant(ctx context.Context, in
 }
 
 // FindYearStatusSuccessByMerchant is the resolver for the findYearStatusSuccessByMerchant field.
-func (r *queryResolver) FindYearStatusSuccessByMerchant(ctx context.Context, input model1.FindYearlyTransactionStatusByMerchantInput) (*model1.APIResponseTransactionYearAmountSuccess, error) {
+func (r *queryResolver) FindYearStatusSuccessByMerchant(ctx context.Context, input model.FindYearlyTransactionStatusByMerchantInput) (*model.APIResponseTransactionYearAmountSuccess, error) {
 	return ResolverHandle(r.ResolverHandle, "FindYearStatusSuccessByMerchant", ctx, func(ctx context.Context) (*model.APIResponseTransactionYearAmountSuccess, error) {
 		year := int(input.Year)
 		merchantID := int(input.MerchantID)
@@ -513,7 +511,7 @@ func (r *queryResolver) FindYearStatusSuccessByMerchant(ctx context.Context, inp
 }
 
 // FindMonthStatusFailedByMerchant is the resolver for the findMonthStatusFailedByMerchant field.
-func (r *queryResolver) FindMonthStatusFailedByMerchant(ctx context.Context, input model1.FindMonthlyTransactionStatusByMerchantInput) (*model1.APIResponseTransactionMonthAmountFailed, error) {
+func (r *queryResolver) FindMonthStatusFailedByMerchant(ctx context.Context, input model.FindMonthlyTransactionStatusByMerchantInput) (*model.APIResponseTransactionMonthAmountFailed, error) {
 	return ResolverHandle(r.ResolverHandle, "FindMonthStatusFailedByMerchant", ctx, func(ctx context.Context) (*model.APIResponseTransactionMonthAmountFailed, error) {
 		year := int(input.Year)
 		month := int(input.Month)
@@ -552,7 +550,7 @@ func (r *queryResolver) FindMonthStatusFailedByMerchant(ctx context.Context, inp
 }
 
 // FindYearStatusFailedByMerchant is the resolver for the findYearStatusFailedByMerchant field.
-func (r *queryResolver) FindYearStatusFailedByMerchant(ctx context.Context, input model1.FindYearlyTransactionStatusByMerchantInput) (*model1.APIResponseTransactionYearAmountFailed, error) {
+func (r *queryResolver) FindYearStatusFailedByMerchant(ctx context.Context, input model.FindYearlyTransactionStatusByMerchantInput) (*model.APIResponseTransactionYearAmountFailed, error) {
 	return ResolverHandle(r.ResolverHandle, "FindYearStatusFailedByMerchant", ctx, func(ctx context.Context) (*model.APIResponseTransactionYearAmountFailed, error) {
 		year := int(input.Year)
 		merchantID := int(input.MerchantID)
@@ -586,7 +584,7 @@ func (r *queryResolver) FindYearStatusFailedByMerchant(ctx context.Context, inpu
 }
 
 // FindMonthMethodSuccess is the resolver for the findMonthMethodSuccess field.
-func (r *queryResolver) FindMonthMethodSuccess(ctx context.Context, input model1.MonthTransactionMethodInput) (*model1.APIResponseTransactionMonthPaymentMethod, error) {
+func (r *queryResolver) FindMonthMethodSuccess(ctx context.Context, input model.MonthTransactionMethodInput) (*model.APIResponseTransactionMonthPaymentMethod, error) {
 	return ResolverHandle(r.ResolverHandle, "FindMonthMethodSuccess", ctx, func(ctx context.Context) (*model.APIResponseTransactionMonthPaymentMethod, error) {
 		year := int(input.Year)
 		month := int(input.Month)
@@ -620,7 +618,7 @@ func (r *queryResolver) FindMonthMethodSuccess(ctx context.Context, input model1
 }
 
 // FindYearMethodSuccess is the resolver for the findYearMethodSuccess field.
-func (r *queryResolver) FindYearMethodSuccess(ctx context.Context, input model1.YearTransactionMethodInput) (*model1.APIResponseTransactionYearPaymentMethod, error) {
+func (r *queryResolver) FindYearMethodSuccess(ctx context.Context, input model.YearTransactionMethodInput) (*model.APIResponseTransactionYearPaymentMethod, error) {
 	return ResolverHandle(r.ResolverHandle, "FindYearMethodSuccess", ctx, func(ctx context.Context) (*model.APIResponseTransactionYearPaymentMethod, error) {
 		year := int(input.Year)
 
@@ -646,7 +644,7 @@ func (r *queryResolver) FindYearMethodSuccess(ctx context.Context, input model1.
 }
 
 // FindMonthMethodByMerchantSuccess retrieves monthly payment methods success filtered by merchant
-func (r *queryResolver) FindMonthMethodByMerchantSuccess(ctx context.Context, input model1.MonthTransactionMethodByMerchantInput) (*model1.APIResponseTransactionMonthPaymentMethod, error) {
+func (r *queryResolver) FindMonthMethodByMerchantSuccess(ctx context.Context, input model.MonthTransactionMethodByMerchantInput) (*model.APIResponseTransactionMonthPaymentMethod, error) {
 	return ResolverHandle(r.ResolverHandle, "FindMonthMethodByMerchantSuccess", ctx, func(ctx context.Context) (*model.APIResponseTransactionMonthPaymentMethod, error) {
 		year := int(input.Year)
 		month := int(input.Month)
@@ -685,7 +683,7 @@ func (r *queryResolver) FindMonthMethodByMerchantSuccess(ctx context.Context, in
 }
 
 // FindYearMethodByMerchantSuccess retrieves yearly payment methods success filtered by merchant
-func (r *queryResolver) FindYearMethodByMerchantSuccess(ctx context.Context, input model1.YearTransactionMethodByMerchantInput) (*model1.APIResponseTransactionYearPaymentMethod, error) {
+func (r *queryResolver) FindYearMethodByMerchantSuccess(ctx context.Context, input model.YearTransactionMethodByMerchantInput) (*model.APIResponseTransactionYearPaymentMethod, error) {
 	return ResolverHandle(r.ResolverHandle, "FindYearMethodByMerchantSuccess", ctx, func(ctx context.Context) (*model.APIResponseTransactionYearPaymentMethod, error) {
 		year := int(input.Year)
 		merchantID := int(input.MerchantID)
@@ -719,7 +717,7 @@ func (r *queryResolver) FindYearMethodByMerchantSuccess(ctx context.Context, inp
 }
 
 // FindMonthMethodFailed is the resolver for the findMonthMethodFailed field.
-func (r *queryResolver) FindMonthMethodFailed(ctx context.Context, input model1.MonthTransactionMethodInput) (*model1.APIResponseTransactionMonthPaymentMethod, error) {
+func (r *queryResolver) FindMonthMethodFailed(ctx context.Context, input model.MonthTransactionMethodInput) (*model.APIResponseTransactionMonthPaymentMethod, error) {
 	return ResolverHandle(r.ResolverHandle, "FindMonthMethodFailed", ctx, func(ctx context.Context) (*model.APIResponseTransactionMonthPaymentMethod, error) {
 		year := int(input.Year)
 		month := int(input.Month)
@@ -753,7 +751,7 @@ func (r *queryResolver) FindMonthMethodFailed(ctx context.Context, input model1.
 }
 
 // FindYearMethodFailed is the resolver for the findYearMethodFailed field.
-func (r *queryResolver) FindYearMethodFailed(ctx context.Context, input model1.YearTransactionMethodInput) (*model1.APIResponseTransactionYearPaymentMethod, error) {
+func (r *queryResolver) FindYearMethodFailed(ctx context.Context, input model.YearTransactionMethodInput) (*model.APIResponseTransactionYearPaymentMethod, error) {
 	return ResolverHandle(r.ResolverHandle, "FindYearMethodFailed", ctx, func(ctx context.Context) (*model.APIResponseTransactionYearPaymentMethod, error) {
 		year := int(input.Year)
 
@@ -781,7 +779,7 @@ func (r *queryResolver) FindYearMethodFailed(ctx context.Context, input model1.Y
 }
 
 // FindMonthMethodByMerchantFailed retrieves monthly payment methods failed filtered by merchant
-func (r *queryResolver) FindMonthMethodByMerchantFailed(ctx context.Context, input model1.MonthTransactionMethodByMerchantInput) (*model1.APIResponseTransactionMonthPaymentMethod, error) {
+func (r *queryResolver) FindMonthMethodByMerchantFailed(ctx context.Context, input model.MonthTransactionMethodByMerchantInput) (*model.APIResponseTransactionMonthPaymentMethod, error) {
 	return ResolverHandle(r.ResolverHandle, "FindMonthMethodByMerchantFailed", ctx, func(ctx context.Context) (*model.APIResponseTransactionMonthPaymentMethod, error) {
 		year := int(input.Year)
 		month := int(input.Month)
@@ -822,7 +820,7 @@ func (r *queryResolver) FindMonthMethodByMerchantFailed(ctx context.Context, inp
 }
 
 // FindYearMethodByMerchantFailed retrieves yearly payment methods failed filtered by merchant
-func (r *queryResolver) FindYearMethodByMerchantFailed(ctx context.Context, input model1.YearTransactionMethodByMerchantInput) (*model1.APIResponseTransactionYearPaymentMethod, error) {
+func (r *queryResolver) FindYearMethodByMerchantFailed(ctx context.Context, input model.YearTransactionMethodByMerchantInput) (*model.APIResponseTransactionYearPaymentMethod, error) {
 	return ResolverHandle(r.ResolverHandle, "FindYearMethodByMerchantFailed", ctx, func(ctx context.Context) (*model.APIResponseTransactionYearPaymentMethod, error) {
 		year := int(input.Year)
 		merchantID := int(input.MerchantID)
@@ -858,7 +856,7 @@ func (r *queryResolver) FindYearMethodByMerchantFailed(ctx context.Context, inpu
 }
 
 // FindByActive is the resolver for the findByActive field.
-func (r *queryResolver) FindByActiveTransaction(ctx context.Context, input *model1.FindAllTransactionInput) (*model1.APIResponsePaginationTransactionDeleteAt, error) {
+func (r *queryResolver) FindByActiveTransaction(ctx context.Context, input *model.FindAllTransactionInput) (*model.APIResponsePaginationTransactionDeleteAt, error) {
 	return ResolverHandle(r.ResolverHandle, "FindByActiveTransaction", ctx, func(ctx context.Context) (*model.APIResponsePaginationTransactionDeleteAt, error) {
 
 		page := int32(*input.Page)
@@ -883,7 +881,7 @@ func (r *queryResolver) FindByActiveTransaction(ctx context.Context, input *mode
 		req := &pb.FindAllTransactionRequest{
 			Page:     int32(page),
 			PageSize: int32(pageSize),
-			Search:   *input.Search,
+			Search:   safeString(input.Search),
 		}
 		transactions, err := r.TransactionGraphql.TransactionClient.FindByActive(ctx, req)
 		if err != nil {
@@ -899,7 +897,7 @@ func (r *queryResolver) FindByActiveTransaction(ctx context.Context, input *mode
 }
 
 // FindByTrashed is the resolver for the findByTrashed field.
-func (r *queryResolver) FindByTrashedTransaction(ctx context.Context, input *model1.FindAllTransactionInput) (*model1.APIResponsePaginationTransactionDeleteAt, error) {
+func (r *queryResolver) FindByTrashedTransaction(ctx context.Context, input *model.FindAllTransactionInput) (*model.APIResponsePaginationTransactionDeleteAt, error) {
 	return ResolverHandle(r.ResolverHandle, "FindByTrashedTransaction", ctx, func(ctx context.Context) (*model.APIResponsePaginationTransactionDeleteAt, error) {
 
 		page := int32(*input.Page)
@@ -924,7 +922,7 @@ func (r *queryResolver) FindByTrashedTransaction(ctx context.Context, input *mod
 		req := &pb.FindAllTransactionRequest{
 			Page:     int32(page),
 			PageSize: int32(pageSize),
-			Search:   *input.Search,
+			Search:   safeString(input.Search),
 		}
 		transactions, err := r.TransactionGraphql.TransactionClient.FindByTrashed(ctx, req)
 		if err != nil {

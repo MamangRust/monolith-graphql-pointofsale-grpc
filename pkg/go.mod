@@ -1,10 +1,10 @@
-module github.com/MamangRust/monolith-point-of-sale-pkg
+module github.com/MamangRust/monolith-graphql-pointofsale-pkg
 
 go 1.24.0
 
 require (
 	github.com/IBM/sarama v1.45.1
-	github.com/MamangRust/monolith-point-of-sale-shared v1.0.2
+	github.com/MamangRust/monolith-graphql-pointofsale-shared v1.0.2
 	github.com/golang-jwt/jwt/v5 v5.2.2
 	github.com/google/uuid v1.6.0
 	github.com/gosimple/slug v1.15.0
@@ -59,8 +59,11 @@ require (
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
 	github.com/valyala/fasttemplate v1.2.2 // indirect
 	go.opentelemetry.io/auto/sdk v1.1.0 // indirect
+	go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc v0.61.0 // indirect
+	go.opentelemetry.io/otel/exporters/otlp/otlpmetric/otlpmetricgrpc v1.36.0 // indirect
 	go.opentelemetry.io/otel/exporters/otlp/otlptrace v1.36.0 // indirect
 	go.opentelemetry.io/otel/metric v1.36.0 // indirect
+	go.opentelemetry.io/otel/sdk/metric v1.36.0 // indirect
 	go.opentelemetry.io/otel/trace v1.36.0 // indirect
 	go.opentelemetry.io/proto/otlp v1.7.0 // indirect
 	go.uber.org/multierr v1.11.0 // indirect
@@ -74,4 +77,10 @@ require (
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
 
-replace github.com/MamangRust/monolith-point-of-sale-shared => ../shared
+replace github.com/MamangRust/monolith-graphql-pointofsale-shared => ../shared
+
+replace github.com/MamangRust/monolith-graphql-pointofsale-pb => ../pb
+
+replace github.com/MamangRust/monolith-graphql-pointofsale-pkg => ../pkg
+
+replace github.com/MamangRust/monolith-graphql-pointofsale-shared => ../shared

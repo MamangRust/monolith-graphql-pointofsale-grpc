@@ -1,7 +1,7 @@
 package user_errors
 
 import (
-	"github.com/MamangRust/monolith-point-of-sale-shared/errors"
+	"github.com/MamangRust/monolith-graphql-pointofsale-shared/errors"
 )
 
 

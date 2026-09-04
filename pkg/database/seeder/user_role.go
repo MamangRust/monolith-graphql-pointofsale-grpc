@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"time"
 
-	db "github.com/MamangRust/monolith-point-of-sale-pkg/database/schema"
-	"github.com/MamangRust/monolith-point-of-sale-pkg/logger"
+	db "github.com/MamangRust/monolith-graphql-pointofsale-pkg/database/schema"
+	"github.com/MamangRust/monolith-graphql-pointofsale-pkg/logger"
 
 	"go.uber.org/zap"
 	"golang.org/x/exp/rand"

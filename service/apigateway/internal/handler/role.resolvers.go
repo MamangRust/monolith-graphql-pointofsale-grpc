@@ -6,18 +6,16 @@ package graph
 
 import (
 	"context"
-
-	"github.com/MamangRust/monolith-point-of-sale-shared/errors"
+	errors "github.com/MamangRust/monolith-graphql-pointofsale-shared/errors"
 
 	"github.com/MamangRust/monolith-graphql-pointofsale-apigateway/internal/model"
-	model1 "github.com/MamangRust/monolith-graphql-pointofsale-apigateway/internal/model"
 	pb "github.com/MamangRust/monolith-graphql-pointofsale-pb/role"
-	"github.com/MamangRust/monolith-point-of-sale-shared/domain/requests"
+	"github.com/MamangRust/monolith-graphql-pointofsale-shared/domain/requests"
 	"google.golang.org/protobuf/types/known/emptypb"
 )
 
 // CreateRole is the resolver for the createRole field.
-func (r *mutationResolver) CreateRole(ctx context.Context, input model1.CreateRoleInput) (*model1.APIResponseRole, error) {
+func (r *mutationResolver) CreateRole(ctx context.Context, input model.CreateRoleInput) (*model.APIResponseRole, error) {
 	return ResolverHandle(r.ResolverHandle, "CreateRole", ctx, func(ctx context.Context) (*model.APIResponseRole, error) {
 		req := requests.CreateRoleRequest{
 			Name: input.Name,
@@ -43,7 +41,7 @@ func (r *mutationResolver) CreateRole(ctx context.Context, input model1.CreateRo
 }
 
 // UpdateRole is the resolver for the updateRole field.
-func (r *mutationResolver) UpdateRole(ctx context.Context, input model1.UpdateRoleInput) (*model1.APIResponseRole, error) {
+func (r *mutationResolver) UpdateRole(ctx context.Context, input model.UpdateRoleInput) (*model.APIResponseRole, error) {
 	return ResolverHandle(r.ResolverHandle, "UpdateRole", ctx, func(ctx context.Context) (*model.APIResponseRole, error) {
 		roleId := int(input.ID)
 
@@ -80,7 +78,7 @@ func (r *mutationResolver) UpdateRole(ctx context.Context, input model1.UpdateRo
 }
 
 // TrashedRole is the resolver for the trashedRole field.
-func (r *mutationResolver) TrashedRole(ctx context.Context, input model1.FindByIDRoleInput) (*model1.APIResponseRoleDeleteAt, error) {
+func (r *mutationResolver) TrashedRole(ctx context.Context, input model.FindByIDRoleInput) (*model.APIResponseRoleDeleteAt, error) {
 	return ResolverHandle(r.ResolverHandle, "TrashedRole", ctx, func(ctx context.Context) (*model.APIResponseRoleDeleteAt, error) {
 		roleID := int32(input.RoleID)
 
@@ -103,7 +101,7 @@ func (r *mutationResolver) TrashedRole(ctx context.Context, input model1.FindByI
 }
 
 // RestoreRole is the resolver for the restoreRole field.
-func (r *mutationResolver) RestoreRole(ctx context.Context, input model1.FindByIDRoleInput) (*model1.APIResponseRoleDeleteAt, error) {
+func (r *mutationResolver) RestoreRole(ctx context.Context, input model.FindByIDRoleInput) (*model.APIResponseRoleDeleteAt, error) {
 	return ResolverHandle(r.ResolverHandle, "RestoreRole", ctx, func(ctx context.Context) (*model.APIResponseRoleDeleteAt, error) {
 		roleID := int32(input.RoleID)
 
@@ -127,7 +125,7 @@ func (r *mutationResolver) RestoreRole(ctx context.Context, input model1.FindByI
 }
 
 // DeleteRolePermanent is the resolver for the deleteRolePermanent field.
-func (r *mutationResolver) DeleteRolePermanent(ctx context.Context, input model1.FindByIDRoleInput) (*model1.APIResponseRoleDelete, error) {
+func (r *mutationResolver) DeleteRolePermanent(ctx context.Context, input model.FindByIDRoleInput) (*model.APIResponseRoleDelete, error) {
 	return ResolverHandle(r.ResolverHandle, "DeleteRolePermanent", ctx, func(ctx context.Context) (*model.APIResponseRoleDelete, error) {
 		roleID := int32(input.RoleID)
 
@@ -151,7 +149,7 @@ func (r *mutationResolver) DeleteRolePermanent(ctx context.Context, input model1
 }
 
 // RestoreAllRole is the resolver for the restoreAllRole field.
-func (r *mutationResolver) RestoreAllRole(ctx context.Context) (*model1.APIResponseRoleAll, error) {
+func (r *mutationResolver) RestoreAllRole(ctx context.Context) (*model.APIResponseRoleAll, error) {
 	return ResolverHandle(r.ResolverHandle, "RestoreAllRole", ctx, func(ctx context.Context) (*model.APIResponseRoleAll, error) {
 		res, err := r.RoleGraphql.RoleClient.RestoreAllRole(ctx, &emptypb.Empty{})
 		if err != nil {
@@ -164,7 +162,7 @@ func (r *mutationResolver) RestoreAllRole(ctx context.Context) (*model1.APIRespo
 }
 
 // DeleteAllRolePermanent is the resolver for the deleteAllRolePermanent field.
-func (r *mutationResolver) DeleteAllRolePermanent(ctx context.Context) (*model1.APIResponseRoleAll, error) {
+func (r *mutationResolver) DeleteAllRolePermanent(ctx context.Context) (*model.APIResponseRoleAll, error) {
 	return ResolverHandle(r.ResolverHandle, "DeleteAllRolePermanent", ctx, func(ctx context.Context) (*model.APIResponseRoleAll, error) {
 		res, err := r.RoleGraphql.RoleClient.DeleteAllRolePermanent(ctx, &emptypb.Empty{})
 		if err != nil {
@@ -177,7 +175,7 @@ func (r *mutationResolver) DeleteAllRolePermanent(ctx context.Context) (*model1.
 }
 
 // FindAllRole is the resolver for the findAllRole field.
-func (r *queryResolver) FindAllRole(ctx context.Context, input *model1.FindAllRoleInput) (*model1.APIResponsePaginationRole, error) {
+func (r *queryResolver) FindAllRole(ctx context.Context, input *model.FindAllRoleInput) (*model.APIResponsePaginationRole, error) {
 	return ResolverHandle(r.ResolverHandle, "FindAllRole", ctx, func(ctx context.Context) (*model.APIResponsePaginationRole, error) {
 		// Normalize input for consistent caching and backend request
 		page := int32(1)
@@ -192,7 +190,7 @@ func (r *queryResolver) FindAllRole(ctx context.Context, input *model1.FindAllRo
 				pageSize = int32(*input.PageSize)
 			}
 			if input.Search != nil {
-				search = *input.Search
+				search = safeString(input.Search)
 			}
 		}
 
@@ -235,7 +233,7 @@ func (r *queryResolver) FindAllRole(ctx context.Context, input *model1.FindAllRo
 }
 
 // FindByIDRole is the resolver for the findByIdRole field.
-func (r *queryResolver) FindByIDRole(ctx context.Context, input model1.FindByIDRoleInput) (*model1.APIResponseRole, error) {
+func (r *queryResolver) FindByIDRole(ctx context.Context, input model.FindByIDRoleInput) (*model.APIResponseRole, error) {
 	return ResolverHandle(r.ResolverHandle, "FindByIDRole", ctx, func(ctx context.Context) (*model.APIResponseRole, error) {
 		id := int(input.RoleID)
 		if id == 0 {
@@ -261,7 +259,7 @@ func (r *queryResolver) FindByIDRole(ctx context.Context, input model1.FindByIDR
 }
 
 // FindByActiveRole is the resolver for the findByActiveRole field.
-func (r *queryResolver) FindByActiveRole(ctx context.Context, input *model1.FindAllRoleInput) (*model1.APIResponsePaginationRoleDeleteAt, error) {
+func (r *queryResolver) FindByActiveRole(ctx context.Context, input *model.FindAllRoleInput) (*model.APIResponsePaginationRoleDeleteAt, error) {
 	return ResolverHandle(r.ResolverHandle, "FindByActiveRole", ctx, func(ctx context.Context) (*model.APIResponsePaginationRoleDeleteAt, error) {
 		// Normalize input for consistent caching and backend request
 		page := int32(1)
@@ -276,7 +274,7 @@ func (r *queryResolver) FindByActiveRole(ctx context.Context, input *model1.Find
 				pageSize = int32(*input.PageSize)
 			}
 			if input.Search != nil {
-				search = *input.Search
+				search = safeString(input.Search)
 			}
 		}
 
@@ -319,7 +317,7 @@ func (r *queryResolver) FindByActiveRole(ctx context.Context, input *model1.Find
 }
 
 // FindByTrashedRole is the resolver for the findByTrashedRole field.
-func (r *queryResolver) FindByTrashedRole(ctx context.Context, input *model1.FindAllRoleInput) (*model1.APIResponsePaginationRoleDeleteAt, error) {
+func (r *queryResolver) FindByTrashedRole(ctx context.Context, input *model.FindAllRoleInput) (*model.APIResponsePaginationRoleDeleteAt, error) {
 	return ResolverHandle(r.ResolverHandle, "FindByTrashedRole", ctx, func(ctx context.Context) (*model.APIResponsePaginationRoleDeleteAt, error) {
 		page := int32(1)
 		pageSize := int32(10)
@@ -333,7 +331,7 @@ func (r *queryResolver) FindByTrashedRole(ctx context.Context, input *model1.Fin
 				pageSize = int32(*input.PageSize)
 			}
 			if input.Search != nil {
-				search = *input.Search
+				search = safeString(input.Search)
 			}
 		}
 
@@ -375,7 +373,7 @@ func (r *queryResolver) FindByTrashedRole(ctx context.Context, input *model1.Fin
 }
 
 // FindByUserIDRole is the resolver for the findByUserIdRole field.
-func (r *queryResolver) FindByUserIDRole(ctx context.Context, input model1.FindByIDUserRoleInput) (*model1.APIResponsesRole, error) {
+func (r *queryResolver) FindByUserIDRole(ctx context.Context, input model.FindByIDUserRoleInput) (*model.APIResponsesRole, error) {
 	return ResolverHandle(r.ResolverHandle, "FindByUserIDRole", ctx, func(ctx context.Context) (*model.APIResponsesRole, error) {
 		userId := int(input.UserID)
 		if userId == 0 {

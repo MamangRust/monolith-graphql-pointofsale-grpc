@@ -7,8 +7,8 @@ import (
 	"sync"
 	"time"
 
-	"github.com/MamangRust/monolith-point-of-sale-pkg/kafka"
-	"github.com/MamangRust/monolith-point-of-sale-pkg/logger"
+	"github.com/MamangRust/monolith-graphql-pointofsale-pkg/kafka"
+	"github.com/MamangRust/monolith-graphql-pointofsale-pkg/logger"
 	"github.com/google/uuid"
 	"go.uber.org/zap"
 )
@@ -40,13 +40,15 @@ func NewMerchantPermission(
 
 	handler := &merchantResponseHandler{validator: p}
 
-	go func() {
-		err := k.StartConsumers([]string{responseTopic}, "merchant-permission-gateway", handler)
-		if err != nil {
-			p.logger.Fatal("Failed to start kafka consumer", zap.Error(err))
-			panic("failed to start kafka consumer: " + err.Error())
-		}
-	}()
+	if k != nil {
+		go func() {
+			err := k.StartConsumers([]string{responseTopic}, "merchant-permission-gateway", handler)
+			if err != nil {
+				p.logger.Fatal("Failed to start kafka consumer", zap.Error(err))
+				panic("failed to start kafka consumer: " + err.Error())
+			}
+		}()
+	}
 
 	return p
 }
@@ -70,7 +72,7 @@ func (p *merchantPermission) ValidateMerchant(ctx context.Context, apiKey string
 		p.mu.Unlock()
 	}()
 
-	if err := p.sendMerchantValidationRequest(apiKey, correlationID); err != nil {
+	if err := p.sendMerchantValidationRequest(ctx, apiKey, correlationID); err != nil {
 		return nil, err
 	}
 
@@ -101,7 +103,7 @@ func (p *merchantPermission) ValidateMerchant(ctx context.Context, apiKey string
 	}
 }
 
-func (p *merchantPermission) sendMerchantValidationRequest(apiKey string, correlationID string) error {
+func (p *merchantPermission) sendMerchantValidationRequest(ctx context.Context, apiKey string, correlationID string) error {
 	payload := map[string]interface{}{
 		"api_key":        apiKey,
 		"correlation_id": correlationID,
@@ -114,7 +116,7 @@ func (p *merchantPermission) sendMerchantValidationRequest(apiKey string, correl
 		return errors.New("failed to encode payload")
 	}
 
-	err = p.kafka.SendMessage(p.requestTopic, correlationID, data)
+	err = p.kafka.SendMessage(ctx, p.requestTopic, correlationID, data)
 	if err != nil {
 		p.logger.Error("Failed to send Kafka message", zap.Error(err), zap.String("correlation_id", correlationID))
 		return errors.New("failed to send Kafka message")

@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/MamangRust/monolith-point-of-sale-shared/cache"
+	"github.com/MamangRust/monolith-graphql-pointofsale-shared/cache"
 
 	"github.com/MamangRust/monolith-graphql-pointofsale-apigateway/internal/model"
 )
@@ -28,7 +28,7 @@ func NewCategoryQueryCache(store *cache.CacheStore) *categoryQueryCache {
 }
 
 func (s *categoryQueryCache) GetCachedCategoriesCache(ctx context.Context, req *model.FindAllCategoryRequest) (*model.APIResponsePaginationCategory, bool) {
-	key := fmt.Sprintf(categoryAllCacheKey, req.Page, req.PageSize, req.Search)
+	key := fmt.Sprintf(categoryAllCacheKey, req.Page, req.PageSize, safeString(req.Search))
 
 	result, found := cache.GetFromCache[model.APIResponsePaginationCategory](ctx, s.store, key)
 
@@ -44,12 +44,12 @@ func (s *categoryQueryCache) SetCachedCategoriesCache(ctx context.Context, req *
 		return
 	}
 
-	key := fmt.Sprintf(categoryAllCacheKey, req.Page, req.PageSize, req.Search)
+	key := fmt.Sprintf(categoryAllCacheKey, req.Page, req.PageSize, safeString(req.Search))
 	cache.SetToCache(ctx, s.store, key, res, ttlDefault)
 }
 
 func (s *categoryQueryCache) GetCachedCategoryActiveCache(ctx context.Context, req *model.FindAllCategoryRequest) (*model.APIResponsePaginationCategoryDeleteAt, bool) {
-	key := fmt.Sprintf(categoryActiveCacheKey, req.Page, req.PageSize, req.Search)
+	key := fmt.Sprintf(categoryActiveCacheKey, req.Page, req.PageSize, safeString(req.Search))
 
 	result, found := cache.GetFromCache[model.APIResponsePaginationCategoryDeleteAt](ctx, s.store, key)
 
@@ -65,12 +65,12 @@ func (s *categoryQueryCache) SetCachedCategoryActiveCache(ctx context.Context, r
 		return
 	}
 
-	key := fmt.Sprintf(categoryActiveCacheKey, req.Page, req.PageSize, req.Search)
+	key := fmt.Sprintf(categoryActiveCacheKey, req.Page, req.PageSize, safeString(req.Search))
 	cache.SetToCache(ctx, s.store, key, res, ttlDefault)
 }
 
 func (s *categoryQueryCache) GetCachedCategoryTrashedCache(ctx context.Context, req *model.FindAllCategoryRequest) (*model.APIResponsePaginationCategoryDeleteAt, bool) {
-	key := fmt.Sprintf(categoryTrashedCacheKey, req.Page, req.PageSize, req.Search)
+	key := fmt.Sprintf(categoryTrashedCacheKey, req.Page, req.PageSize, safeString(req.Search))
 
 	result, found := cache.GetFromCache[model.APIResponsePaginationCategoryDeleteAt](ctx, s.store, key)
 
@@ -86,7 +86,7 @@ func (s *categoryQueryCache) SetCachedCategoryTrashedCache(ctx context.Context, 
 		return
 	}
 
-	key := fmt.Sprintf(categoryTrashedCacheKey, req.Page, req.PageSize, req.Search)
+	key := fmt.Sprintf(categoryTrashedCacheKey, req.Page, req.PageSize, safeString(req.Search))
 	cache.SetToCache(ctx, s.store, key, res, ttlDefault)
 }
 
@@ -108,4 +108,11 @@ func (s *categoryQueryCache) SetCachedCategoryCache(ctx context.Context, res *mo
 
 	key := fmt.Sprintf(categoryByIdCacheKey, res.Data.ID)
 	cache.SetToCache(ctx, s.store, key, res, ttlDefault)
+}
+
+func safeString(s *string) string {
+	if s == nil {
+		return ""
+	}
+	return *s
 }

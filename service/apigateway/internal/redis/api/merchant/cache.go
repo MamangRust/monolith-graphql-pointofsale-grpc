@@ -1,6 +1,6 @@
 package merchant_cache
 
-import "github.com/MamangRust/monolith-point-of-sale-shared/cache"
+import "github.com/MamangRust/monolith-graphql-pointofsale-shared/cache"
 
 type MerchantMenCache interface {
 	MerchantQueryCache

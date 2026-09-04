@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/MamangRust/monolith-point-of-sale-shared/cache"
+	"github.com/MamangRust/monolith-graphql-pointofsale-shared/cache"
 
 	"github.com/MamangRust/monolith-graphql-pointofsale-apigateway/internal/model"
 )
@@ -18,7 +18,7 @@ func NewCashierQueryCache(store *cache.CacheStore) *cashierQueryCache {
 }
 
 func (s *cashierQueryCache) GetCachedCashiersCache(ctx context.Context, req *model.FindAllCashierRequest) (*model.APIResponsePaginationCashier, bool) {
-	key := fmt.Sprintf(cashierAllCacheKey, req.Page, req.PageSize, req.Search)
+	key := fmt.Sprintf(cashierAllCacheKey, req.Page, req.PageSize, safeString(req.Search))
 
 	result, found := cache.GetFromCache[model.APIResponsePaginationCashier](ctx, s.store, key)
 
@@ -34,7 +34,7 @@ func (s *cashierQueryCache) SetCachedCashiersCache(ctx context.Context, req *mod
 		return
 	}
 
-	key := fmt.Sprintf(cashierAllCacheKey, req.Page, req.PageSize, req.Search)
+	key := fmt.Sprintf(cashierAllCacheKey, req.Page, req.PageSize, safeString(req.Search))
 	cache.SetToCache(ctx, s.store, key, res, ttlDefault)
 }
 
@@ -60,7 +60,7 @@ func (s *cashierQueryCache) SetCachedCashier(ctx context.Context, res *model.API
 }
 
 func (s *cashierQueryCache) GetCachedCashiersActive(ctx context.Context, req *model.FindAllCashierRequest) (*model.APIResponsePaginationCashierDeleteAt, bool) {
-	key := fmt.Sprintf(cashierActiveCacheKey, req.Page, req.PageSize, req.Search)
+	key := fmt.Sprintf(cashierActiveCacheKey, req.Page, req.PageSize, safeString(req.Search))
 
 	result, found := cache.GetFromCache[model.APIResponsePaginationCashierDeleteAt](ctx, s.store, key)
 
@@ -76,12 +76,12 @@ func (s *cashierQueryCache) SetCachedCashiersActive(ctx context.Context, req *mo
 		return
 	}
 
-	key := fmt.Sprintf(cashierActiveCacheKey, req.Page, req.PageSize, req.Search)
+	key := fmt.Sprintf(cashierActiveCacheKey, req.Page, req.PageSize, safeString(req.Search))
 	cache.SetToCache(ctx, s.store, key, res, ttlDefault)
 }
 
 func (s *cashierQueryCache) GetCachedCashiersTrashed(ctx context.Context, req *model.FindAllCashierRequest) (*model.APIResponsePaginationCashierDeleteAt, bool) {
-	key := fmt.Sprintf(cashierTrashedCacheKey, req.Page, req.PageSize, req.Search)
+	key := fmt.Sprintf(cashierTrashedCacheKey, req.Page, req.PageSize, safeString(req.Search))
 
 	result, found := cache.GetFromCache[model.APIResponsePaginationCashierDeleteAt](ctx, s.store, key)
 
@@ -97,12 +97,12 @@ func (s *cashierQueryCache) SetCachedCashiersTrashed(ctx context.Context, req *m
 		return
 	}
 
-	key := fmt.Sprintf(cashierTrashedCacheKey, req.Page, req.PageSize, req.Search)
+	key := fmt.Sprintf(cashierTrashedCacheKey, req.Page, req.PageSize, safeString(req.Search))
 	cache.SetToCache(ctx, s.store, key, res, ttlDefault)
 }
 
 func (s *cashierQueryCache) GetCachedCashiersByMerchant(ctx context.Context, req *model.FindByMerchantCashierRequest) (*model.APIResponsePaginationCashier, bool) {
-	key := fmt.Sprintf(cashierByMerchantCacheKey, req.MerchantID, req.Page, req.PageSize, req.Search)
+	key := fmt.Sprintf(cashierByMerchantCacheKey, req.MerchantID, req.Page, req.PageSize, safeString(req.Search))
 
 	result, found := cache.GetFromCache[model.APIResponsePaginationCashier](ctx, s.store, key)
 
@@ -118,6 +118,13 @@ func (s *cashierQueryCache) SetCachedCashiersByMerchant(ctx context.Context, req
 		return
 	}
 
-	key := fmt.Sprintf(cashierByMerchantCacheKey, req.MerchantID, req.Page, req.PageSize, req.Search)
+	key := fmt.Sprintf(cashierByMerchantCacheKey, req.MerchantID, req.Page, req.PageSize, safeString(req.Search))
 	cache.SetToCache(ctx, s.store, key, res, ttlDefault)
+}
+
+func safeString(s *string) string {
+	if s == nil {
+		return ""
+	}
+	return *s
 }

@@ -6,16 +6,14 @@ package graph
 
 import (
 	"context"
-
-	"github.com/MamangRust/monolith-point-of-sale-shared/errors"
+	errors "github.com/MamangRust/monolith-graphql-pointofsale-shared/errors"
 
 	"github.com/MamangRust/monolith-graphql-pointofsale-apigateway/internal/model"
-	model1 "github.com/MamangRust/monolith-graphql-pointofsale-apigateway/internal/model"
-	pb "github.com/MamangRust/monolith-graphql-pointofsale-pb/order_item"
+	pb "github.com/MamangRust/monolith-graphql-pointofsale-pb"
 )
 
 // FindAllOrderItem is the resolver for the findAllOrderItem field.
-func (r *queryResolver) FindAllOrderItem(ctx context.Context, input model1.FindAllOrderItemInput) (*model1.APIResponsePaginationOrderItem, error) {
+func (r *queryResolver) FindAllOrderItem(ctx context.Context, input model.FindAllOrderItemInput) (*model.APIResponsePaginationOrderItem, error) {
 	return ResolverHandle(r.ResolverHandle, "FindAllOrderItem", ctx, func(ctx context.Context) (*model.APIResponsePaginationOrderItem, error) {
 		page := int32(*input.Page)
 		pageSize := int32(*input.PageSize)
@@ -39,7 +37,7 @@ func (r *queryResolver) FindAllOrderItem(ctx context.Context, input model1.FindA
 		req := &pb.FindAllOrderItemRequest{
 			Page:     int32(page),
 			PageSize: int32(pageSize),
-			Search:   *input.Search,
+			Search:   safeString(input.Search),
 		}
 		orderItems, err := r.OrderItemGraphql.OrderItemClient.FindAll(ctx, req)
 		if err != nil {
@@ -55,7 +53,7 @@ func (r *queryResolver) FindAllOrderItem(ctx context.Context, input model1.FindA
 }
 
 // FindByActiveOrderItem is the resolver for the findByActiveOrderItem field.
-func (r *queryResolver) FindByActiveOrderItem(ctx context.Context, input model1.FindAllOrderItemInput) (*model1.APIResponsePaginationOrderItemDeleteAt, error) {
+func (r *queryResolver) FindByActiveOrderItem(ctx context.Context, input model.FindAllOrderItemInput) (*model.APIResponsePaginationOrderItemDeleteAt, error) {
 	return ResolverHandle(r.ResolverHandle, "FindByActiveOrderItem", ctx, func(ctx context.Context) (*model.APIResponsePaginationOrderItemDeleteAt, error) {
 		page := int32(*input.Page)
 		pageSize := int32(*input.PageSize)
@@ -79,7 +77,7 @@ func (r *queryResolver) FindByActiveOrderItem(ctx context.Context, input model1.
 		req := &pb.FindAllOrderItemRequest{
 			Page:     int32(page),
 			PageSize: int32(pageSize),
-			Search:   *input.Search,
+			Search:   safeString(input.Search),
 		}
 		orderItems, err := r.OrderItemGraphql.OrderItemClient.FindByActive(ctx, req)
 		if err != nil {
@@ -95,7 +93,7 @@ func (r *queryResolver) FindByActiveOrderItem(ctx context.Context, input model1.
 }
 
 // FindByTrashedOrderItem is the resolver for the findByTrashedOrderItem field.
-func (r *queryResolver) FindByTrashedOrderItem(ctx context.Context, input model1.FindAllOrderItemInput) (*model1.APIResponsePaginationOrderItemDeleteAt, error) {
+func (r *queryResolver) FindByTrashedOrderItem(ctx context.Context, input model.FindAllOrderItemInput) (*model.APIResponsePaginationOrderItemDeleteAt, error) {
 	return ResolverHandle(r.ResolverHandle, "FindByTrashedOrderItem", ctx, func(ctx context.Context) (*model.APIResponsePaginationOrderItemDeleteAt, error) {
 		page := int32(*input.Page)
 		pageSize := int32(*input.PageSize)
@@ -119,7 +117,7 @@ func (r *queryResolver) FindByTrashedOrderItem(ctx context.Context, input model1
 		req := &pb.FindAllOrderItemRequest{
 			Page:     int32(page),
 			PageSize: int32(pageSize),
-			Search:   *input.Search,
+			Search:   safeString(input.Search),
 		}
 		orderItems, err := r.OrderItemGraphql.OrderItemClient.FindByTrashed(ctx, req)
 		if err != nil {
@@ -135,7 +133,7 @@ func (r *queryResolver) FindByTrashedOrderItem(ctx context.Context, input model1
 }
 
 // FindOrderItemByOrder is the resolver for the findOrderItemByOrder field.
-func (r *queryResolver) FindOrderItemByOrder(ctx context.Context, input model1.FindByIDOrderItemInput) (*model1.APIResponsesOrderItem, error) {
+func (r *queryResolver) FindOrderItemByOrder(ctx context.Context, input model.FindByIDOrderItemInput) (*model.APIResponsesOrderItem, error) {
 	return ResolverHandle(r.ResolverHandle, "FindOrderItemByOrder", ctx, func(ctx context.Context) (*model.APIResponsesOrderItem, error) {
 		id := int(input.ID)
 

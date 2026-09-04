@@ -207,12 +207,12 @@ func (c *categoryGraphqlMapper) mapResponsesCategoryYearPrice(data []*pb.Categor
 			continue
 		}
 		responses = append(responses, &model.CategoryYearPriceResponse{
-			Year:              item.Year,
-			CategoryID:        int32(item.CategoryId),
-			CategoryName:      item.CategoryName,
-			OrderCount:        int32(item.OrderCount),
-			ItemsSold:         int32(item.ItemsSold),
-			TotalRevenue:      int32(item.TotalRevenue),
+			Year:               item.Year,
+			CategoryID:         int32(item.CategoryId),
+			CategoryName:       item.CategoryName,
+			OrderCount:         int32(item.OrderCount),
+			ItemsSold:          int32(item.ItemsSold),
+			TotalRevenue:       int32(item.TotalRevenue),
 			UniqueProductsSold: int32(item.UniqueProductsSold),
 		})
 	}

@@ -5,7 +5,7 @@ import (
 	"fmt"
 
 	"github.com/MamangRust/monolith-graphql-pointofsale-apigateway/internal/model"
-	"github.com/MamangRust/monolith-point-of-sale-shared/cache"
+	"github.com/MamangRust/monolith-graphql-pointofsale-shared/cache"
 )
 
 type identityCache struct {

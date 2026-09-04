@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"github.com/MamangRust/monolith-graphql-pointofsale-apigateway/internal/model"
-	"github.com/MamangRust/monolith-point-of-sale-shared/cache"
+	"github.com/MamangRust/monolith-graphql-pointofsale-shared/cache"
 )
 
 const (
@@ -28,7 +28,7 @@ func NewMerchantQueryCache(store *cache.CacheStore) *merchantQueryCache {
 }
 
 func (m *merchantQueryCache) GetCachedMerchants(ctx context.Context, req *model.FindAllMerchantInput) (*model.APIResponsePaginationMerchant, bool) {
-	key := fmt.Sprintf(merchantAllCacheKey, req.Page, req.PageSize, req.Search)
+	key := fmt.Sprintf(merchantAllCacheKey, req.Page, req.PageSize, safeString(req.Search))
 
 	result, found := cache.GetFromCache[model.APIResponsePaginationMerchant](ctx, m.store, key)
 
@@ -44,13 +44,13 @@ func (m *merchantQueryCache) SetCachedMerchants(ctx context.Context, req *model.
 		return
 	}
 
-	key := fmt.Sprintf(merchantAllCacheKey, req.Page, req.PageSize, req.Search)
+	key := fmt.Sprintf(merchantAllCacheKey, req.Page, req.PageSize, safeString(req.Search))
 
 	cache.SetToCache(ctx, m.store, key, res, ttlDefault)
 }
 
 func (m *merchantQueryCache) GetCachedMerchantActive(ctx context.Context, req *model.FindAllMerchantInput) (*model.APIResponsePaginationMerchantDeleteAt, bool) {
-	key := fmt.Sprintf(merchantActiveCacheKey, req.Page, req.PageSize, req.Search)
+	key := fmt.Sprintf(merchantActiveCacheKey, req.Page, req.PageSize, safeString(req.Search))
 
 	result, found := cache.GetFromCache[model.APIResponsePaginationMerchantDeleteAt](ctx, m.store, key)
 
@@ -66,12 +66,12 @@ func (m *merchantQueryCache) SetCachedMerchantActive(ctx context.Context, req *m
 		return
 	}
 
-	key := fmt.Sprintf(merchantActiveCacheKey, req.Page, req.PageSize, req.Search)
+	key := fmt.Sprintf(merchantActiveCacheKey, req.Page, req.PageSize, safeString(req.Search))
 	cache.SetToCache(ctx, m.store, key, res, ttlDefault)
 }
 
 func (m *merchantQueryCache) GetCachedMerchantTrashed(ctx context.Context, req *model.FindAllMerchantInput) (*model.APIResponsePaginationMerchantDeleteAt, bool) {
-	key := fmt.Sprintf(merchantTrashedCacheKey, req.Page, req.PageSize, req.Search)
+	key := fmt.Sprintf(merchantTrashedCacheKey, req.Page, req.PageSize, safeString(req.Search))
 
 	result, found := cache.GetFromCache[model.APIResponsePaginationMerchantDeleteAt](ctx, m.store, key)
 
@@ -87,7 +87,7 @@ func (m *merchantQueryCache) SetCachedMerchantTrashed(ctx context.Context, req *
 		return
 	}
 
-	key := fmt.Sprintf(merchantTrashedCacheKey, req.Page, req.PageSize, req.Search)
+	key := fmt.Sprintf(merchantTrashedCacheKey, req.Page, req.PageSize, safeString(req.Search))
 	cache.SetToCache(ctx, m.store, key, res, ttlDefault)
 }
 
@@ -131,4 +131,11 @@ func (m *merchantQueryCache) SetCachedMerchantsByUserId(ctx context.Context, use
 
 	key := fmt.Sprintf(merchantByUserIdCacheKey, userId)
 	cache.SetToCache(ctx, m.store, key, res, ttlDefault)
+}
+
+func safeString(s *string) string {
+	if s == nil {
+		return ""
+	}
+	return *s
 }

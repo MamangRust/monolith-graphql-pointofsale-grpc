@@ -6,18 +6,16 @@ package graph
 
 import (
 	"context"
-
-	"github.com/MamangRust/monolith-point-of-sale-shared/errors"
+	errors "github.com/MamangRust/monolith-graphql-pointofsale-shared/errors"
 
 	"github.com/MamangRust/monolith-graphql-pointofsale-apigateway/internal/model"
-	model1 "github.com/MamangRust/monolith-graphql-pointofsale-apigateway/internal/model"
 	pb "github.com/MamangRust/monolith-graphql-pointofsale-pb/order"
-	"github.com/MamangRust/monolith-point-of-sale-shared/domain/requests"
+	"github.com/MamangRust/monolith-graphql-pointofsale-shared/domain/requests"
 	"google.golang.org/protobuf/types/known/emptypb"
 )
 
 // CreateOrder is the resolver for the createOrder field.
-func (r *mutationResolver) CreateOrder(ctx context.Context, input model1.CreateOrderInput) (*model1.APIResponseOrder, error) {
+func (r *mutationResolver) CreateOrder(ctx context.Context, input model.CreateOrderInput) (*model.APIResponseOrder, error) {
 	return ResolverHandle(r.ResolverHandle, "CreateOrder", ctx, func(ctx context.Context) (*model.APIResponseOrder, error) {
 		req := &requests.CreateOrderRequest{
 			MerchantID: int(input.MerchantID),
@@ -62,7 +60,7 @@ func (r *mutationResolver) CreateOrder(ctx context.Context, input model1.CreateO
 }
 
 // UpdateOrder is the resolver for the updateOrder field.
-func (r *mutationResolver) UpdateOrder(ctx context.Context, input model1.UpdateOrderInput) (*model1.APIResponseOrder, error) {
+func (r *mutationResolver) UpdateOrder(ctx context.Context, input model.UpdateOrderInput) (*model.APIResponseOrder, error) {
 	return ResolverHandle(r.ResolverHandle, "UpdateOrder", ctx, func(ctx context.Context) (*model.APIResponseOrder, error) {
 		id := int(input.OrderID)
 
@@ -113,7 +111,7 @@ func (r *mutationResolver) UpdateOrder(ctx context.Context, input model1.UpdateO
 }
 
 // TrashedOrder is the resolver for the trashedOrder field.
-func (r *mutationResolver) TrashedOrder(ctx context.Context, input model1.FindByIDOrderInput) (*model1.APIResponseOrderDeleteAt, error) {
+func (r *mutationResolver) TrashedOrder(ctx context.Context, input model.FindByIDOrderInput) (*model.APIResponseOrderDeleteAt, error) {
 	return ResolverHandle(r.ResolverHandle, "TrashedOrder", ctx, func(ctx context.Context) (*model.APIResponseOrderDeleteAt, error) {
 		id := int(input.ID)
 
@@ -139,7 +137,7 @@ func (r *mutationResolver) TrashedOrder(ctx context.Context, input model1.FindBy
 }
 
 // RestoreOrder is the resolver for the restoreOrder field.
-func (r *mutationResolver) RestoreOrder(ctx context.Context, input model1.FindByIDOrderInput) (*model1.APIResponseOrderDeleteAt, error) {
+func (r *mutationResolver) RestoreOrder(ctx context.Context, input model.FindByIDOrderInput) (*model.APIResponseOrderDeleteAt, error) {
 	return ResolverHandle(r.ResolverHandle, "RestoreOrder", ctx, func(ctx context.Context) (*model.APIResponseOrderDeleteAt, error) {
 		id := int(input.ID)
 
@@ -165,7 +163,7 @@ func (r *mutationResolver) RestoreOrder(ctx context.Context, input model1.FindBy
 }
 
 // DeleteOrderPermanent is the resolver for the deleteOrderPermanent field.
-func (r *mutationResolver) DeleteOrderPermanent(ctx context.Context, input model1.FindByIDOrderInput) (*model1.APIResponseOrderDelete, error) {
+func (r *mutationResolver) DeleteOrderPermanent(ctx context.Context, input model.FindByIDOrderInput) (*model.APIResponseOrderDelete, error) {
 	return ResolverHandle(r.ResolverHandle, "DeleteOrderPermanent", ctx, func(ctx context.Context) (*model.APIResponseOrderDelete, error) {
 		id := int(input.ID)
 
@@ -188,7 +186,7 @@ func (r *mutationResolver) DeleteOrderPermanent(ctx context.Context, input model
 }
 
 // RestoreAllOrder is the resolver for the restoreAllOrder field.
-func (r *mutationResolver) RestoreAllOrder(ctx context.Context) (*model1.APIResponseOrderAll, error) {
+func (r *mutationResolver) RestoreAllOrder(ctx context.Context) (*model.APIResponseOrderAll, error) {
 	return ResolverHandle(r.ResolverHandle, "RestoreAllOrder", ctx, func(ctx context.Context) (*model.APIResponseOrderAll, error) {
 		res, err := r.OrderGraphql.OrderClient.RestoreAllOrder(ctx, &emptypb.Empty{})
 		if err != nil {
@@ -202,7 +200,7 @@ func (r *mutationResolver) RestoreAllOrder(ctx context.Context) (*model1.APIResp
 }
 
 // DeleteAllOrderPermanent is the resolver for the deleteAllOrderPermanent field.
-func (r *mutationResolver) DeleteAllOrderPermanent(ctx context.Context) (*model1.APIResponseOrderAll, error) {
+func (r *mutationResolver) DeleteAllOrderPermanent(ctx context.Context) (*model.APIResponseOrderAll, error) {
 	return ResolverHandle(r.ResolverHandle, "DeleteAllOrderPermanent", ctx, func(ctx context.Context) (*model.APIResponseOrderAll, error) {
 		res, err := r.OrderGraphql.OrderClient.DeleteAllOrderPermanent(ctx, &emptypb.Empty{})
 		if err != nil {
@@ -216,7 +214,7 @@ func (r *mutationResolver) DeleteAllOrderPermanent(ctx context.Context) (*model1
 }
 
 // FindMonthlyTotalRevenue is the resolver for the findMonthlyTotalRevenue field.
-func (r *queryResolver) FindMonthlyTotalRevenue(ctx context.Context, input model1.FindYearMonthTotalRevenueInput) (*model1.APIResponseOrderMonthlyTotalRevenue, error) {
+func (r *queryResolver) FindMonthlyTotalRevenue(ctx context.Context, input model.FindYearMonthTotalRevenueInput) (*model.APIResponseOrderMonthlyTotalRevenue, error) {
 	return ResolverHandle(r.ResolverHandle, "FindMonthlyTotalRevenue", ctx, func(ctx context.Context) (*model.APIResponseOrderMonthlyTotalRevenue, error) {
 		year := int(input.Year)
 		month := int(input.Month)
@@ -250,7 +248,7 @@ func (r *queryResolver) FindMonthlyTotalRevenue(ctx context.Context, input model
 }
 
 // FindYearlyTotalRevenue is the resolver for the findYearlyTotalRevenue field.
-func (r *queryResolver) FindYearlyTotalRevenue(ctx context.Context, input model1.FindYearTotalRevenueInput) (*model1.APIResponseOrderYearlyTotalRevenue, error) {
+func (r *queryResolver) FindYearlyTotalRevenue(ctx context.Context, input model.FindYearTotalRevenueInput) (*model.APIResponseOrderYearlyTotalRevenue, error) {
 	return ResolverHandle(r.ResolverHandle, "FindYearlyTotalRevenue", ctx, func(ctx context.Context) (*model.APIResponseOrderYearlyTotalRevenue, error) {
 		year := int(input.Year)
 
@@ -276,7 +274,7 @@ func (r *queryResolver) FindYearlyTotalRevenue(ctx context.Context, input model1
 }
 
 // FindMonthlyTotalRevenueByID is the resolver for the findMonthlyTotalRevenueById field.
-func (r *queryResolver) FindMonthlyTotalRevenueByID(ctx context.Context, input model1.FindYearMonthTotalRevenueByIDInput) (*model1.APIResponseOrderMonthlyTotalRevenue, error) {
+func (r *queryResolver) FindMonthlyTotalRevenueByID(ctx context.Context, input model.FindYearMonthTotalRevenueByIDInput) (*model.APIResponseOrderMonthlyTotalRevenue, error) {
 	return ResolverHandle(r.ResolverHandle, "FindMonthlyTotalRevenueByID", ctx, func(ctx context.Context) (*model.APIResponseOrderMonthlyTotalRevenue, error) {
 		orderID := int(input.OrderID)
 		year := int(input.Year)
@@ -310,7 +308,7 @@ func (r *queryResolver) FindMonthlyTotalRevenueByID(ctx context.Context, input m
 }
 
 // FindYearlyTotalRevenueByID is the resolver for the findYearlyTotalRevenueById field.
-func (r *queryResolver) FindYearlyTotalRevenueByID(ctx context.Context, input model1.FindYearTotalRevenueByIDInput) (*model1.APIResponseOrderYearlyTotalRevenue, error) {
+func (r *queryResolver) FindYearlyTotalRevenueByID(ctx context.Context, input model.FindYearTotalRevenueByIDInput) (*model.APIResponseOrderYearlyTotalRevenue, error) {
 	return ResolverHandle(r.ResolverHandle, "FindYearlyTotalRevenueByID", ctx, func(ctx context.Context) (*model.APIResponseOrderYearlyTotalRevenue, error) {
 		orderID := int(input.OrderID)
 		year := int(input.Year)
@@ -339,7 +337,7 @@ func (r *queryResolver) FindYearlyTotalRevenueByID(ctx context.Context, input mo
 }
 
 // FindMonthlyTotalRevenueByMerchant is the resolver for the findMonthlyTotalRevenueByMerchant field.
-func (r *queryResolver) FindMonthlyTotalRevenueByMerchant(ctx context.Context, input model1.FindYearMonthTotalRevenueByMerchantInput) (*model1.APIResponseOrderMonthlyTotalRevenue, error) {
+func (r *queryResolver) FindMonthlyTotalRevenueByMerchant(ctx context.Context, input model.FindYearMonthTotalRevenueByMerchantInput) (*model.APIResponseOrderMonthlyTotalRevenue, error) {
 	return ResolverHandle(r.ResolverHandle, "FindMonthlyTotalRevenueByMerchant", ctx, func(ctx context.Context) (*model.APIResponseOrderMonthlyTotalRevenue, error) {
 		year := int(input.Year)
 		month := int(input.Month)
@@ -378,7 +376,7 @@ func (r *queryResolver) FindMonthlyTotalRevenueByMerchant(ctx context.Context, i
 }
 
 // FindYearlyTotalRevenueByMerchant is the resolver for the findYearlyTotalRevenueByMerchant field.
-func (r *queryResolver) FindYearlyTotalRevenueByMerchant(ctx context.Context, input model1.FindYearTotalRevenueByMerchantInput) (*model1.APIResponseOrderYearlyTotalRevenue, error) {
+func (r *queryResolver) FindYearlyTotalRevenueByMerchant(ctx context.Context, input model.FindYearTotalRevenueByMerchantInput) (*model.APIResponseOrderYearlyTotalRevenue, error) {
 	return ResolverHandle(r.ResolverHandle, "FindYearlyTotalRevenueByMerchant", ctx, func(ctx context.Context) (*model.APIResponseOrderYearlyTotalRevenue, error) {
 		year := int(input.Year)
 		merchantID := int(input.MerchantID)
@@ -412,7 +410,7 @@ func (r *queryResolver) FindYearlyTotalRevenueByMerchant(ctx context.Context, in
 }
 
 // FindAllOrder is the resolver for the findAllOrder field.
-func (r *queryResolver) FindAllOrder(ctx context.Context, input model1.FindAllOrderInput) (*model1.APIResponsePaginationOrder, error) {
+func (r *queryResolver) FindAllOrder(ctx context.Context, input model.FindAllOrderInput) (*model.APIResponsePaginationOrder, error) {
 	return ResolverHandle(r.ResolverHandle, "FindAllOrder", ctx, func(ctx context.Context) (*model.APIResponsePaginationOrder, error) {
 		// Normalize defaults for consistency in Cache Key
 		page := int32(*input.Page)
@@ -437,7 +435,7 @@ func (r *queryResolver) FindAllOrder(ctx context.Context, input model1.FindAllOr
 		reqService := &pb.FindAllOrderRequest{
 			Page:     int32(page),
 			PageSize: int32(pageSize),
-			Search:   *input.Search,
+			Search:   safeString(input.Search),
 		}
 		orders, err := r.OrderGraphql.OrderClient.FindAll(ctx, reqService)
 		if err != nil {
@@ -453,7 +451,7 @@ func (r *queryResolver) FindAllOrder(ctx context.Context, input model1.FindAllOr
 }
 
 // FindByMerchantOrder is the resolver for the findByMerchantOrder field.
-func (r *queryResolver) FindByMerchantOrder(ctx context.Context, input model1.FindAllOrderMerchantInput) (*model1.APIResponsePaginationOrder, error) {
+func (r *queryResolver) FindByMerchantOrder(ctx context.Context, input model.FindAllOrderMerchantInput) (*model.APIResponsePaginationOrder, error) {
 	return ResolverHandle(r.ResolverHandle, "FindByMerchantOrder", ctx, func(ctx context.Context) (*model.APIResponsePaginationOrder, error) {
 		page := int32(*input.Page)
 		pageSize := int32(*input.PageSize)
@@ -478,7 +476,7 @@ func (r *queryResolver) FindByMerchantOrder(ctx context.Context, input model1.Fi
 		reqService := &pb.FindAllOrderMerchantRequest{
 			Page:       int32(page),
 			PageSize:   int32(pageSize),
-			Search:     *input.Search,
+			Search:     safeString(input.Search),
 			MerchantId: int32(input.MerchantID),
 		}
 		orders, err := r.OrderGraphql.OrderClient.FindByMerchant(ctx, reqService)
@@ -495,7 +493,7 @@ func (r *queryResolver) FindByMerchantOrder(ctx context.Context, input model1.Fi
 }
 
 // FindByIDOrder is the resolver for the findByIdOrder field.
-func (r *queryResolver) FindByIDOrder(ctx context.Context, input model1.FindByIDOrderInput) (*model1.APIResponseOrder, error) {
+func (r *queryResolver) FindByIDOrder(ctx context.Context, input model.FindByIDOrderInput) (*model.APIResponseOrder, error) {
 	return ResolverHandle(r.ResolverHandle, "FindByIDOrder", ctx, func(ctx context.Context) (*model.APIResponseOrder, error) {
 		id := int(input.ID)
 
@@ -523,7 +521,7 @@ func (r *queryResolver) FindByIDOrder(ctx context.Context, input model1.FindByID
 }
 
 // FindByActiveOrder is the resolver for the findByActiveOrder field.
-func (r *queryResolver) FindByActiveOrder(ctx context.Context, input model1.FindAllOrderInput) (*model1.APIResponsePaginationOrderDeleteAt, error) {
+func (r *queryResolver) FindByActiveOrder(ctx context.Context, input model.FindAllOrderInput) (*model.APIResponsePaginationOrderDeleteAt, error) {
 	return ResolverHandle(r.ResolverHandle, "FindByActiveOrder", ctx, func(ctx context.Context) (*model.APIResponsePaginationOrderDeleteAt, error) {
 		// Normalize defaults
 		page := int32(*input.Page)
@@ -548,7 +546,7 @@ func (r *queryResolver) FindByActiveOrder(ctx context.Context, input model1.Find
 		reqService := &pb.FindAllOrderRequest{
 			Page:     int32(page),
 			PageSize: int32(pageSize),
-			Search:   *input.Search,
+			Search:   safeString(input.Search),
 		}
 		orders, err := r.OrderGraphql.OrderClient.FindByActive(ctx, reqService)
 		if err != nil {
@@ -564,7 +562,7 @@ func (r *queryResolver) FindByActiveOrder(ctx context.Context, input model1.Find
 }
 
 // FindByTrashedOrder is the resolver for the findByTrashedOrder field.
-func (r *queryResolver) FindByTrashedOrder(ctx context.Context, input model1.FindAllOrderInput) (*model1.APIResponsePaginationOrderDeleteAt, error) {
+func (r *queryResolver) FindByTrashedOrder(ctx context.Context, input model.FindAllOrderInput) (*model.APIResponsePaginationOrderDeleteAt, error) {
 	return ResolverHandle(r.ResolverHandle, "FindByTrashedOrder", ctx, func(ctx context.Context) (*model.APIResponsePaginationOrderDeleteAt, error) {
 		// Normalize defaults
 		page := int32(*input.Page)
@@ -589,7 +587,7 @@ func (r *queryResolver) FindByTrashedOrder(ctx context.Context, input model1.Fin
 		reqService := &pb.FindAllOrderRequest{
 			Page:     int32(page),
 			PageSize: int32(pageSize),
-			Search:   *input.Search,
+			Search:   safeString(input.Search),
 		}
 		orders, err := r.OrderGraphql.OrderClient.FindByTrashed(ctx, reqService)
 		if err != nil {
@@ -605,7 +603,7 @@ func (r *queryResolver) FindByTrashedOrder(ctx context.Context, input model1.Fin
 }
 
 // FindMonthlyRevenue is the resolver for the findMonthlyRevenue field.
-func (r *queryResolver) FindMonthlyRevenue(ctx context.Context, input model1.FindYearOrderInput) (*model1.APIResponseOrderMonthly, error) {
+func (r *queryResolver) FindMonthlyRevenue(ctx context.Context, input model.FindYearOrderInput) (*model.APIResponseOrderMonthly, error) {
 	return ResolverHandle(r.ResolverHandle, "FindMonthlyRevenue", ctx, func(ctx context.Context) (*model.APIResponseOrderMonthly, error) {
 		year := int(input.Year)
 
@@ -633,7 +631,7 @@ func (r *queryResolver) FindMonthlyRevenue(ctx context.Context, input model1.Fin
 }
 
 // FindYearlyRevenue is the resolver for the findYearlyRevenue field.
-func (r *queryResolver) FindYearlyRevenue(ctx context.Context, input model1.FindYearOrderInput) (*model1.APIResponseOrderYearly, error) {
+func (r *queryResolver) FindYearlyRevenue(ctx context.Context, input model.FindYearOrderInput) (*model.APIResponseOrderYearly, error) {
 	return ResolverHandle(r.ResolverHandle, "FindYearlyRevenue", ctx, func(ctx context.Context) (*model.APIResponseOrderYearly, error) {
 		year := int(input.Year)
 
@@ -659,7 +657,7 @@ func (r *queryResolver) FindYearlyRevenue(ctx context.Context, input model1.Find
 }
 
 // FindMonthlyRevenueByMerchant is the resolver for the findMonthlyRevenueByMerchant field.
-func (r *queryResolver) FindMonthlyRevenueByMerchant(ctx context.Context, input model1.FindYearOrderByMerchantInput) (*model1.APIResponseOrderMonthly, error) {
+func (r *queryResolver) FindMonthlyRevenueByMerchant(ctx context.Context, input model.FindYearOrderByMerchantInput) (*model.APIResponseOrderMonthly, error) {
 	return ResolverHandle(r.ResolverHandle, "FindMonthlyRevenueByMerchant", ctx, func(ctx context.Context) (*model.APIResponseOrderMonthly, error) {
 		year := int(input.Year)
 		merchantID := int(input.MerchantID)
@@ -693,7 +691,7 @@ func (r *queryResolver) FindMonthlyRevenueByMerchant(ctx context.Context, input 
 }
 
 // FindYearlyRevenueByMerchant is the resolver for the findYearlyRevenueByMerchant field.
-func (r *queryResolver) FindYearlyRevenueByMerchant(ctx context.Context, input model1.FindYearOrderByMerchantInput) (*model1.APIResponseOrderYearly, error) {
+func (r *queryResolver) FindYearlyRevenueByMerchant(ctx context.Context, input model.FindYearOrderByMerchantInput) (*model.APIResponseOrderYearly, error) {
 	return ResolverHandle(r.ResolverHandle, "FindYearlyRevenueByMerchant", ctx, func(ctx context.Context) (*model.APIResponseOrderYearly, error) {
 		year := int(input.Year)
 		merchantID := int(input.MerchantID)

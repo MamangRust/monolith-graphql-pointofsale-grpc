@@ -1,11 +1,11 @@
 package protomapper
 
 import (
-	pb "github.com/MamangRust/monolith-graphql-pointofsale-pb/order_item"
-	"github.com/MamangRust/monolith-point-of-sale-shared/domain/response"
-
-	pbutils "github.com/MamangRust/monolith-graphql-pointofsale-pb/api"
+	"github.com/MamangRust/monolith-graphql-pointofsale-shared/domain/response"
 	"google.golang.org/protobuf/types/known/wrapperspb"
+
+	pbcommon "github.com/MamangRust/monolith-graphql-pointofsale-pb/common"
+	pb "github.com/MamangRust/monolith-graphql-pointofsale-pb"
 )
 
 type orderItemProtoMapper struct{}
@@ -44,7 +44,7 @@ func (o *orderItemProtoMapper) ToProtoResponseOrderItemAll(status string, messag
 	}
 }
 
-func (o *orderItemProtoMapper) ToProtoResponsePaginationOrderItemDeleteAt(pagination *pbutils.PaginationMeta, status string, message string, orderItems []*response.OrderItemResponseDeleteAt) *pb.ApiResponsePaginationOrderItemDeleteAt {
+func (o *orderItemProtoMapper) ToProtoResponsePaginationOrderItemDeleteAt(pagination *pbcommon.PaginationMeta, status string, message string, orderItems []*response.OrderItemResponseDeleteAt) *pb.ApiResponsePaginationOrderItemDeleteAt {
 	return &pb.ApiResponsePaginationOrderItemDeleteAt{
 		Status:     status,
 		Message:    message,
@@ -53,7 +53,7 @@ func (o *orderItemProtoMapper) ToProtoResponsePaginationOrderItemDeleteAt(pagina
 	}
 }
 
-func (o *orderItemProtoMapper) ToProtoResponsePaginationOrderItem(pagination *pbutils.PaginationMeta, status string, message string, orderItems []*response.OrderItemResponse) *pb.ApiResponsePaginationOrderItem {
+func (o *orderItemProtoMapper) ToProtoResponsePaginationOrderItem(pagination *pbcommon.PaginationMeta, status string, message string, orderItems []*response.OrderItemResponse) *pb.ApiResponsePaginationOrderItem {
 	return &pb.ApiResponsePaginationOrderItem{
 		Status:     status,
 		Message:    message,

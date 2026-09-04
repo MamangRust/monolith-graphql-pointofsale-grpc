@@ -4,9 +4,9 @@ import (
 	"context"
 	"fmt"
 
-	db "github.com/MamangRust/monolith-point-of-sale-pkg/database/schema"
-	"github.com/MamangRust/monolith-point-of-sale-pkg/hash"
-	"github.com/MamangRust/monolith-point-of-sale-pkg/logger"
+	db "github.com/MamangRust/monolith-graphql-pointofsale-pkg/database/schema"
+	"github.com/MamangRust/monolith-graphql-pointofsale-pkg/hash"
+	"github.com/MamangRust/monolith-graphql-pointofsale-pkg/logger"
 
 	"github.com/google/uuid"
 	"go.uber.org/zap"

@@ -6,23 +6,21 @@ package graph
 
 import (
 	"context"
-
-	"github.com/MamangRust/monolith-point-of-sale-shared/errors"
 	"fmt"
+	errors "github.com/MamangRust/monolith-graphql-pointofsale-shared/errors"
 	"io"
 	"os"
 	"path/filepath"
 	"time"
 
 	"github.com/MamangRust/monolith-graphql-pointofsale-apigateway/internal/model"
-	model1 "github.com/MamangRust/monolith-graphql-pointofsale-apigateway/internal/model"
 	pb "github.com/MamangRust/monolith-graphql-pointofsale-pb/product"
-	"github.com/MamangRust/monolith-point-of-sale-shared/domain/requests"
+	"github.com/MamangRust/monolith-graphql-pointofsale-shared/domain/requests"
 	"google.golang.org/protobuf/types/known/emptypb"
 )
 
 // CreateProduct is the resolver for the createProduct field.
-func (r *mutationResolver) CreateProduct(ctx context.Context, input model1.CreateProductInput) (*model1.APIResponseProduct, error) {
+func (r *mutationResolver) CreateProduct(ctx context.Context, input model.CreateProductInput) (*model.APIResponseProduct, error) {
 	return ResolverHandle(r.ResolverHandle, "CreateProduct", ctx, func(ctx context.Context) (*model.APIResponseProduct, error) {
 		var imagePath string
 
@@ -91,7 +89,7 @@ func (r *mutationResolver) CreateProduct(ctx context.Context, input model1.Creat
 }
 
 // UpdateProduct is the resolver for the updateProduct field.
-func (r *mutationResolver) UpdateProduct(ctx context.Context, input model1.UpdateProductInput) (*model1.APIResponseProduct, error) {
+func (r *mutationResolver) UpdateProduct(ctx context.Context, input model.UpdateProductInput) (*model.APIResponseProduct, error) {
 	return ResolverHandle(r.ResolverHandle, "UpdateProduct", ctx, func(ctx context.Context) (*model.APIResponseProduct, error) {
 		id := int(input.ProductID)
 
@@ -171,7 +169,7 @@ func (r *mutationResolver) UpdateProduct(ctx context.Context, input model1.Updat
 }
 
 // TrashedProduct is the resolver for the trashedProduct field.
-func (r *mutationResolver) TrashedProduct(ctx context.Context, input model1.FindByIDProductInput) (*model1.APIResponseProductDeleteAt, error) {
+func (r *mutationResolver) TrashedProduct(ctx context.Context, input model.FindByIDProductInput) (*model.APIResponseProductDeleteAt, error) {
 	return ResolverHandle(r.ResolverHandle, "TrashedProduct", ctx, func(ctx context.Context) (*model.APIResponseProductDeleteAt, error) {
 		id := int(input.ID)
 
@@ -197,7 +195,7 @@ func (r *mutationResolver) TrashedProduct(ctx context.Context, input model1.Find
 }
 
 // RestoreProduct is the resolver for the restoreProduct field.
-func (r *mutationResolver) RestoreProduct(ctx context.Context, input model1.FindByIDProductInput) (*model1.APIResponseProductDeleteAt, error) {
+func (r *mutationResolver) RestoreProduct(ctx context.Context, input model.FindByIDProductInput) (*model.APIResponseProductDeleteAt, error) {
 	return ResolverHandle(r.ResolverHandle, "RestoreProduct", ctx, func(ctx context.Context) (*model.APIResponseProductDeleteAt, error) {
 		id := int(input.ID)
 
@@ -223,7 +221,7 @@ func (r *mutationResolver) RestoreProduct(ctx context.Context, input model1.Find
 }
 
 // DeleteProductPermanent is the resolver for the deleteProductPermanent field.
-func (r *mutationResolver) DeleteProductPermanent(ctx context.Context, input model1.FindByIDProductInput) (*model1.APIResponseProductDelete, error) {
+func (r *mutationResolver) DeleteProductPermanent(ctx context.Context, input model.FindByIDProductInput) (*model.APIResponseProductDelete, error) {
 	return ResolverHandle(r.ResolverHandle, "DeleteProductPermanent", ctx, func(ctx context.Context) (*model.APIResponseProductDelete, error) {
 		id := int(input.ID)
 
@@ -249,7 +247,7 @@ func (r *mutationResolver) DeleteProductPermanent(ctx context.Context, input mod
 }
 
 // RestoreAllProduct is the resolver for the restoreAllProduct field.
-func (r *mutationResolver) RestoreAllProduct(ctx context.Context) (*model1.APIResponseProductAll, error) {
+func (r *mutationResolver) RestoreAllProduct(ctx context.Context) (*model.APIResponseProductAll, error) {
 	return ResolverHandle(r.ResolverHandle, "RestoreAllProduct", ctx, func(ctx context.Context) (*model.APIResponseProductAll, error) {
 		res, err := r.ProductGraphql.ProductClient.RestoreAllProduct(ctx, &emptypb.Empty{})
 		if err != nil {
@@ -263,7 +261,7 @@ func (r *mutationResolver) RestoreAllProduct(ctx context.Context) (*model1.APIRe
 }
 
 // DeleteAllProductPermanent is the resolver for the deleteAllProductPermanent field.
-func (r *mutationResolver) DeleteAllProductPermanent(ctx context.Context) (*model1.APIResponseProductAll, error) {
+func (r *mutationResolver) DeleteAllProductPermanent(ctx context.Context) (*model.APIResponseProductAll, error) {
 	return ResolverHandle(r.ResolverHandle, "DeleteAllProductPermanent", ctx, func(ctx context.Context) (*model.APIResponseProductAll, error) {
 		res, err := r.ProductGraphql.ProductClient.DeleteAllProductPermanent(ctx, &emptypb.Empty{})
 		if err != nil {
@@ -277,7 +275,7 @@ func (r *mutationResolver) DeleteAllProductPermanent(ctx context.Context) (*mode
 }
 
 // FindAllProduct is the resolver for the findAllProduct field.
-func (r *queryResolver) FindAllProduct(ctx context.Context, input *model1.FindAllProductInput) (*model1.APIResponsePaginationProduct, error) {
+func (r *queryResolver) FindAllProduct(ctx context.Context, input *model.FindAllProductInput) (*model.APIResponsePaginationProduct, error) {
 	return ResolverHandle(r.ResolverHandle, "FindAllProduct", ctx, func(ctx context.Context) (*model.APIResponsePaginationProduct, error) {
 		page := int32(*input.Page)
 		pageSize := int32(*input.PageSize)
@@ -301,7 +299,7 @@ func (r *queryResolver) FindAllProduct(ctx context.Context, input *model1.FindAl
 		req := &pb.FindAllProductRequest{
 			Page:     int32(page),
 			PageSize: int32(pageSize),
-			Search:   *input.Search,
+			Search:   safeString(input.Search),
 		}
 		products, err := r.ProductGraphql.ProductClient.FindAll(ctx, req)
 		if err != nil {
@@ -317,7 +315,7 @@ func (r *queryResolver) FindAllProduct(ctx context.Context, input *model1.FindAl
 }
 
 // FindByMerchantProduct is the resolver for the findByMerchantProduct field.
-func (r *queryResolver) FindByMerchantProduct(ctx context.Context, input model1.FindAllProductMerchantInput) (*model1.APIResponsePaginationProduct, error) {
+func (r *queryResolver) FindByMerchantProduct(ctx context.Context, input model.FindAllProductMerchantInput) (*model.APIResponsePaginationProduct, error) {
 	return ResolverHandle(r.ResolverHandle, "FindByMerchantProduct", ctx, func(ctx context.Context) (*model.APIResponsePaginationProduct, error) {
 		page := int32(*input.Page)
 		pageSize := int32(*input.PageSize)
@@ -354,7 +352,7 @@ func (r *queryResolver) FindByMerchantProduct(ctx context.Context, input model1.
 		req := &pb.FindAllProductMerchantRequest{
 			Page:       int32(page),
 			PageSize:   int32(pageSize),
-			Search:     *input.Search,
+			Search:     safeString(input.Search),
 			MinPrice:   int32(min_price),
 			MaxPrice:   int32(max_price),
 			MerchantId: int32(input.MerchantID),
@@ -373,7 +371,7 @@ func (r *queryResolver) FindByMerchantProduct(ctx context.Context, input model1.
 }
 
 // FindByCategoryProduct is the resolver for the findByCategoryProduct field.
-func (r *queryResolver) FindByCategoryProduct(ctx context.Context, input model1.FindAllProductCategoryInput) (*model1.APIResponsePaginationProduct, error) {
+func (r *queryResolver) FindByCategoryProduct(ctx context.Context, input model.FindAllProductCategoryInput) (*model.APIResponsePaginationProduct, error) {
 	return ResolverHandle(r.ResolverHandle, "FindByCategoryProduct", ctx, func(ctx context.Context) (*model.APIResponsePaginationProduct, error) {
 		page := int32(*input.Page)
 		pageSize := int32(*input.PageSize)
@@ -410,7 +408,7 @@ func (r *queryResolver) FindByCategoryProduct(ctx context.Context, input model1.
 		req := &pb.FindAllProductCategoryRequest{
 			Page:         int32(page),
 			PageSize:     int32(pageSize),
-			Search:       *input.Search,
+			Search:       safeString(input.Search),
 			Minprice:     int32(min_price),
 			Maxprice:     int32(max_price),
 			CategoryName: *input.CategoryName,
@@ -429,7 +427,7 @@ func (r *queryResolver) FindByCategoryProduct(ctx context.Context, input model1.
 }
 
 // FindByIDProduct is the resolver for the findByIdProduct field.
-func (r *queryResolver) FindByIDProduct(ctx context.Context, input model1.FindByIDProductInput) (*model1.APIResponseProduct, error) {
+func (r *queryResolver) FindByIDProduct(ctx context.Context, input model.FindByIDProductInput) (*model.APIResponseProduct, error) {
 	return ResolverHandle(r.ResolverHandle, "FindByIDProduct", ctx, func(ctx context.Context) (*model.APIResponseProduct, error) {
 		id := int(input.ID)
 
@@ -455,7 +453,7 @@ func (r *queryResolver) FindByIDProduct(ctx context.Context, input model1.FindBy
 }
 
 // FindByActiveProduct is the resolver for the findByActiveProduct field.
-func (r *queryResolver) FindByActiveProduct(ctx context.Context, input *model1.FindAllProductInput) (*model1.APIResponsePaginationProductDeleteAt, error) {
+func (r *queryResolver) FindByActiveProduct(ctx context.Context, input *model.FindAllProductInput) (*model.APIResponsePaginationProductDeleteAt, error) {
 	return ResolverHandle(r.ResolverHandle, "FindByActiveProduct", ctx, func(ctx context.Context) (*model.APIResponsePaginationProductDeleteAt, error) {
 		page := int32(*input.Page)
 		pageSize := int32(*input.PageSize)
@@ -479,7 +477,7 @@ func (r *queryResolver) FindByActiveProduct(ctx context.Context, input *model1.F
 		req := &pb.FindAllProductRequest{
 			Page:     int32(page),
 			PageSize: int32(pageSize),
-			Search:   *input.Search,
+			Search:   safeString(input.Search),
 		}
 		products, err := r.ProductGraphql.ProductClient.FindByActive(ctx, req)
 		if err != nil {
@@ -495,7 +493,7 @@ func (r *queryResolver) FindByActiveProduct(ctx context.Context, input *model1.F
 }
 
 // FindByTrashedProduct is the resolver for the findByTrashedProduct field.
-func (r *queryResolver) FindByTrashedProduct(ctx context.Context, input *model1.FindAllProductInput) (*model1.APIResponsePaginationProductDeleteAt, error) {
+func (r *queryResolver) FindByTrashedProduct(ctx context.Context, input *model.FindAllProductInput) (*model.APIResponsePaginationProductDeleteAt, error) {
 	return ResolverHandle(r.ResolverHandle, "FindByTrashedProduct", ctx, func(ctx context.Context) (*model.APIResponsePaginationProductDeleteAt, error) {
 		page := int32(*input.Page)
 		pageSize := int32(*input.PageSize)
@@ -519,7 +517,7 @@ func (r *queryResolver) FindByTrashedProduct(ctx context.Context, input *model1.
 		req := &pb.FindAllProductRequest{
 			Page:     int32(page),
 			PageSize: int32(pageSize),
-			Search:   *input.Search,
+			Search:   safeString(input.Search),
 		}
 		products, err := r.ProductGraphql.ProductClient.FindByTrashed(ctx, req)
 		if err != nil {

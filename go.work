@@ -3,6 +3,7 @@ go 1.25.1
 use (
 	./pb
 	./pkg
+	./shared
 	./service/apigateway
 	./service/auth
 	./service/cashier
@@ -14,7 +15,8 @@ use (
 	./service/order_item
 	./service/product
 	./service/role
+	./service/seeder
 	./service/transaction
 	./service/user
-	./shared
+	./tests
 )

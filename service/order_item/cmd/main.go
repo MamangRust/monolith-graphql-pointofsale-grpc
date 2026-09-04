@@ -1,8 +1,8 @@
 package main
 
 import (
-	"github.com/MamangRust/monolith-point-of-sale-order-item/internal/apps"
-	"github.com/MamangRust/monolith-point-of-sale-pkg/server"
+	"github.com/MamangRust/monolith-graphql-pointofsale-order-item/apps"
+	"github.com/MamangRust/monolith-graphql-pointofsale-pkg/server"
 	"github.com/spf13/viper"
 )
 

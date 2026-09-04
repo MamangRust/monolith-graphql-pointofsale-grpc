@@ -1,9 +1,9 @@
 package mencache
 
 import (
-	"github.com/MamangRust/monolith-point-of-sale-pkg/logger"
-	sharedcachehelpers "github.com/MamangRust/monolith-point-of-sale-shared/cache"
-	"github.com/MamangRust/monolith-point-of-sale-shared/observability"
+	"github.com/MamangRust/monolith-graphql-pointofsale-pkg/logger"
+	sharedcachehelpers "github.com/MamangRust/monolith-graphql-pointofsale-shared/cache"
+	"github.com/MamangRust/monolith-graphql-pointofsale-shared/observability"
 	"go.uber.org/zap"
 
 	"github.com/redis/go-redis/v9"

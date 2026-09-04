@@ -5,7 +5,7 @@ import (
 	"fmt"
 
 	"github.com/MamangRust/monolith-graphql-pointofsale-apigateway/internal/model"
-	"github.com/MamangRust/monolith-point-of-sale-shared/cache"
+	"github.com/MamangRust/monolith-graphql-pointofsale-shared/cache"
 )
 
 type roleQueryCache struct {
@@ -21,13 +21,13 @@ func (r *roleQueryCache) SetCachedRoles(ctx context.Context, req *model.FindAllR
 		return
 	}
 
-	key := fmt.Sprintf(roleAllCacheKey, *req.Page, *req.PageSize, *req.Search)
+	key := fmt.Sprintf(roleAllCacheKey, *req.Page, *req.PageSize, safeString(req.Search))
 
 	cache.SetToCache(ctx, r.store, key, data, ttlDefault)
 }
 
 func (r *roleQueryCache) GetCachedRoles(ctx context.Context, req *model.FindAllRoleInput) (*model.APIResponsePaginationRole, bool) {
-	key := fmt.Sprintf(roleAllCacheKey, *req.Page, *req.PageSize, *req.Search)
+	key := fmt.Sprintf(roleAllCacheKey, *req.Page, *req.PageSize, safeString(req.Search))
 
 	result, found := cache.GetFromCache[model.APIResponsePaginationRole](ctx, r.store, key)
 
@@ -87,13 +87,13 @@ func (r *roleQueryCache) SetCachedRoleActive(ctx context.Context, req *model.Fin
 		return
 	}
 
-	key := fmt.Sprintf(roleActiveCacheKey, *req.Page, *req.PageSize, *req.Search)
+	key := fmt.Sprintf(roleActiveCacheKey, *req.Page, *req.PageSize, safeString(req.Search))
 
 	cache.SetToCache(ctx, r.store, key, data, ttlDefault)
 }
 
 func (r *roleQueryCache) GetCachedRoleActive(ctx context.Context, req *model.FindAllRoleInput) (*model.APIResponsePaginationRoleDeleteAt, bool) {
-	key := fmt.Sprintf(roleActiveCacheKey, *req.Page, *req.PageSize, *req.Search)
+	key := fmt.Sprintf(roleActiveCacheKey, *req.Page, *req.PageSize, safeString(req.Search))
 
 	result, found := cache.GetFromCache[model.APIResponsePaginationRoleDeleteAt](ctx, r.store, key)
 
@@ -109,13 +109,13 @@ func (r *roleQueryCache) SetCachedRoleTrashed(ctx context.Context, req *model.Fi
 		return
 	}
 
-	key := fmt.Sprintf(roleTrashedCacheKey, *req.Page, *req.PageSize, *req.Search)
+	key := fmt.Sprintf(roleTrashedCacheKey, *req.Page, *req.PageSize, safeString(req.Search))
 
 	cache.SetToCache(ctx, r.store, key, data, ttlDefault)
 }
 
 func (r *roleQueryCache) GetCachedRoleTrashed(ctx context.Context, req *model.FindAllRoleInput) (*model.APIResponsePaginationRoleDeleteAt, bool) {
-	key := fmt.Sprintf(roleTrashedCacheKey, *req.Page, *req.PageSize, *req.Search)
+	key := fmt.Sprintf(roleTrashedCacheKey, *req.Page, *req.PageSize, safeString(req.Search))
 
 	result, found := cache.GetFromCache[model.APIResponsePaginationRoleDeleteAt](ctx, r.store, key)
 
@@ -124,4 +124,11 @@ func (r *roleQueryCache) GetCachedRoleTrashed(ctx context.Context, req *model.Fi
 	}
 
 	return result, true
+}
+
+func safeString(s *string) string {
+	if s == nil {
+		return ""
+	}
+	return *s
 }
